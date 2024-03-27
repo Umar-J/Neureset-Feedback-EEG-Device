@@ -1,10 +1,10 @@
 #include "menu.h"
 
-Menu::Menu(QString name, QStringList items, Menu* parent){
+Menu::Menu(QString iname, QStringList items, Menu* iparent){
 
-    name = name;
+    name = iname;
     menuItems = items;
-    parent = parent;
+    parent = iparent;
 }
 
 Menu::~Menu(){

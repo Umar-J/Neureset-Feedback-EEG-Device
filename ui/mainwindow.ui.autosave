@@ -686,6 +686,19 @@ QPushButton:pressed {
       <string/>
      </property>
     </widget>
+    <widget class="QPushButton" name="pushButton">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>83</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>PushButton</string>
+     </property>
+    </widget>
     <zorder>powerOffView</zorder>
     <zorder>statusBarQFrame</zorder>
     <zorder>menuLabel</zorder>
@@ -700,6 +713,7 @@ QPushButton:pressed {
     <zorder>menuButton</zorder>
     <zorder>batteryLevelBar</zorder>
     <zorder>stopButton</zorder>
+    <zorder>pushButton</zorder>
    </widget>
    <widget class="QPushButton" name="applyToSkinButton">
     <property name="geometry">

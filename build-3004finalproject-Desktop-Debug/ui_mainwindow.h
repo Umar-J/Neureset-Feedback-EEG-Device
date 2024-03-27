@@ -42,12 +42,12 @@ public:
     QPushButton *upButton;
     QPushButton *downButton;
     QPushButton *okButton;
-    QPushButton *rightButton;
-    QPushButton *leftButton;
+    QPushButton *playButton;
+    QPushButton *pauseButton;
     QPushButton *powerButton;
     QPushButton *menuButton;
     QProgressBar *batteryLevelBar;
-    QPushButton *backButton;
+    QPushButton *stopButton;
     QPushButton *applyToSkinButton;
     QTextBrowser *textBrowser;
     QPushButton *applyToSkinButton_4;
@@ -221,14 +221,14 @@ public:
 "QPushButton:pressed {\n"
 "	background-color: #ffd300;\n"
 "}"));
-        rightButton = new QPushButton(denasWidget);
-        rightButton->setObjectName(QString::fromUtf8("rightButton"));
-        rightButton->setGeometry(QRect(30, 220, 40, 40));
-        rightButton->setMinimumSize(QSize(40, 40));
-        rightButton->setMaximumSize(QSize(40, 40));
-        rightButton->setBaseSize(QSize(40, 40));
-        rightButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"image: url(:/buttons/rightButton.svg);\n"
+        playButton = new QPushButton(denasWidget);
+        playButton->setObjectName(QString::fromUtf8("playButton"));
+        playButton->setGeometry(QRect(30, 220, 40, 40));
+        playButton->setMinimumSize(QSize(40, 40));
+        playButton->setMaximumSize(QSize(40, 40));
+        playButton->setBaseSize(QSize(40, 40));
+        playButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"image: url(:/buttons/playButton.svg);\n"
 "background-color: #ffffff;\n"
 "border-radius: 20px;\n"
 "}\n"
@@ -236,18 +236,18 @@ public:
 "QPushButton:pressed {\n"
 "	background-color: #ffd300;\n"
 "}"));
-        rightButton->setCheckable(false);
-        rightButton->setAutoRepeat(true);
-        rightButton->setAutoRepeatDelay(600);
-        rightButton->setAutoRepeatInterval(150);
-        leftButton = new QPushButton(denasWidget);
-        leftButton->setObjectName(QString::fromUtf8("leftButton"));
-        leftButton->setGeometry(QRect(80, 220, 40, 40));
-        leftButton->setMinimumSize(QSize(40, 40));
-        leftButton->setMaximumSize(QSize(40, 40));
-        leftButton->setBaseSize(QSize(40, 40));
-        leftButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"image: url(:/buttons/leftButton.svg);\n"
+        playButton->setCheckable(false);
+        playButton->setAutoRepeat(true);
+        playButton->setAutoRepeatDelay(600);
+        playButton->setAutoRepeatInterval(150);
+        pauseButton = new QPushButton(denasWidget);
+        pauseButton->setObjectName(QString::fromUtf8("pauseButton"));
+        pauseButton->setGeometry(QRect(80, 220, 40, 40));
+        pauseButton->setMinimumSize(QSize(40, 40));
+        pauseButton->setMaximumSize(QSize(40, 40));
+        pauseButton->setBaseSize(QSize(40, 40));
+        pauseButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"image: url(:/buttons/pauseButton.svg);\n"
 "background-color: #ffffff;\n"
 "border-radius: 20px;\n"
 "}\n"
@@ -255,9 +255,9 @@ public:
 "QPushButton:pressed {\n"
 "	background-color: #ffd300;\n"
 "}"));
-        leftButton->setAutoRepeat(true);
-        leftButton->setAutoRepeatDelay(600);
-        leftButton->setAutoRepeatInterval(150);
+        pauseButton->setAutoRepeat(true);
+        pauseButton->setAutoRepeatDelay(600);
+        pauseButton->setAutoRepeatInterval(150);
         powerButton = new QPushButton(denasWidget);
         powerButton->setObjectName(QString::fromUtf8("powerButton"));
         powerButton->setGeometry(QRect(260, 10, 40, 40));
@@ -308,14 +308,14 @@ public:
         batteryLevelBar->setTextVisible(true);
         batteryLevelBar->setOrientation(Qt::Horizontal);
         batteryLevelBar->setInvertedAppearance(false);
-        backButton = new QPushButton(denasWidget);
-        backButton->setObjectName(QString::fromUtf8("backButton"));
-        backButton->setGeometry(QRect(130, 220, 40, 40));
-        backButton->setMinimumSize(QSize(40, 40));
-        backButton->setMaximumSize(QSize(40, 40));
-        backButton->setBaseSize(QSize(40, 40));
-        backButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
-"image: url(:/buttons/backButton.svg);\n"
+        stopButton = new QPushButton(denasWidget);
+        stopButton->setObjectName(QString::fromUtf8("stopButton"));
+        stopButton->setGeometry(QRect(130, 220, 40, 40));
+        stopButton->setMinimumSize(QSize(40, 40));
+        stopButton->setMaximumSize(QSize(40, 40));
+        stopButton->setBaseSize(QSize(40, 40));
+        stopButton->setStyleSheet(QString::fromUtf8("QPushButton {\n"
+"image: url(:/buttons/stopButton.svg);\n"
 "background-color: #ffffff;\n"
 "border-radius: 20px;\n"
 "}\n"
@@ -331,12 +331,12 @@ public:
         upButton->raise();
         downButton->raise();
         okButton->raise();
-        rightButton->raise();
-        leftButton->raise();
+        playButton->raise();
+        pauseButton->raise();
         powerButton->raise();
         menuButton->raise();
         batteryLevelBar->raise();
-        backButton->raise();
+        stopButton->raise();
         applyToSkinButton = new QPushButton(centralwidget);
         applyToSkinButton->setObjectName(QString::fromUtf8("applyToSkinButton"));
         applyToSkinButton->setGeometry(QRect(790, 110, 41, 31));
@@ -712,12 +712,12 @@ public:
         upButton->setText(QString());
         downButton->setText(QString());
         okButton->setText(QString());
-        rightButton->setText(QString());
-        leftButton->setText(QString());
+        playButton->setText(QString());
+        pauseButton->setText(QString());
         powerButton->setText(QString());
         menuButton->setText(QString());
         batteryLevelBar->setFormat(QCoreApplication::translate("MainWindow", "%p%", nullptr));
-        backButton->setText(QString());
+        stopButton->setText(QString());
         applyToSkinButton->setText(QString());
         applyToSkinButton_4->setText(QString());
         applyToSkinButton_5->setText(QString());

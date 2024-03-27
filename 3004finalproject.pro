@@ -14,9 +14,15 @@ resources_dir = res
 SOURCES += \
     $${source_dir}/main.cpp \
     $${source_dir}/mainwindow.cpp \
+    $${source_dir}/EEG.cpp \
+    $${source_dir}/menu.cpp \
+    $${source_dir}/Session.cpp \
 
 HEADERS += \
     $${source_dir}/mainwindow.h \
+    $${source_dir}/EEG.h \
+    $${source_dir}/menu.h \
+    $${source_dir}/Session.h \
 
 FORMS += \
     $${forms_dir}/mainwindow.ui

@@ -53,12 +53,20 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = ../src/main.cpp \
-		../src/mainwindow.cpp qrc_denas.cpp \
-		moc_mainwindow.cpp
+		../src/mainwindow.cpp \
+		../src/EEG.cpp \
+		../src/menu.cpp \
+		../src/Session.cpp qrc_denas.cpp \
+		moc_mainwindow.cpp \
+		moc_Session.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
+		EEG.o \
+		menu.o \
+		Session.o \
 		qrc_denas.o \
-		moc_mainwindow.o
+		moc_mainwindow.o \
+		moc_Session.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
@@ -137,8 +145,14 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		../../3004finalproject.pro ../src/mainwindow.h ../src/main.cpp \
-		../src/mainwindow.cpp
+		../../3004finalproject.pro ../src/mainwindow.h \
+		../src/EEG.h \
+		../src/menu.h \
+		../src/Session.h ../src/main.cpp \
+		../src/mainwindow.cpp \
+		../src/EEG.cpp \
+		../src/menu.cpp \
+		../src/Session.cpp
 QMAKE_TARGET  = 3004finalproject
 DESTDIR       = 
 TARGET        = 3004finalproject
@@ -327,8 +341,8 @@ distdir: FORCE
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../res/denas.qrc $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/mainwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/mainwindow.h ../src/EEG.h ../src/menu.h ../src/Session.h $(DISTDIR)/
+	$(COPY_FILE) --parents ../src/main.cpp ../src/mainwindow.cpp ../src/EEG.cpp ../src/menu.cpp ../src/Session.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ../ui/mainwindow.ui $(DISTDIR)/
 
 
@@ -364,8 +378,11 @@ qrc_denas.cpp: ../res/denas.qrc \
 		../res/buttons/powerButton.svg \
 		../res/buttons/upButton.svg \
 		../res/buttons/backButton.svg \
+		../res/buttons/playButton.svg \
 		../res/buttons/downButton.svg \
 		../res/buttons/chargeButton.svg \
+		../res/buttons/stopButton.svg \
+		../res/buttons/pauseButton.svg \
 		../res/buttons/leftButton.svg \
 		../res/overlay/denasButtonless.svg \
 		../res/icons/electrodeOn.svg \
@@ -378,13 +395,18 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 	g++ -pipe -g -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_Session.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_Session.cpp
 moc_mainwindow.cpp: ../src/mainwindow.h \
 		moc_predefs.h \
 		/usr/lib/qt5/bin/moc
 	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/3004group/3004FinalProject/build-3004finalproject-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/3004group/3004FinalProject -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/mainwindow.h -o moc_mainwindow.cpp
+
+moc_Session.cpp: ../src/Session.h \
+		moc_predefs.h \
+		/usr/lib/qt5/bin/moc
+	/usr/lib/qt5/bin/moc $(DEFINES) --include /home/student/3004group/3004FinalProject/build-3004finalproject-Desktop-Debug/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/student/3004group/3004FinalProject -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I. -I/usr/include/c++/11 -I/usr/include/x86_64-linux-gnu/c++/11 -I/usr/include/c++/11/backward -I/usr/lib/gcc/x86_64-linux-gnu/11/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include ../src/Session.h -o moc_Session.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -414,11 +436,23 @@ mainwindow.o: ../src/mainwindow.cpp ../src/mainwindow.h \
 		ui_mainwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o ../src/mainwindow.cpp
 
+EEG.o: ../src/EEG.cpp ../src/EEG.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o EEG.o ../src/EEG.cpp
+
+menu.o: ../src/menu.cpp ../src/menu.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o menu.o ../src/menu.cpp
+
+Session.o: ../src/Session.cpp ../src/Session.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Session.o ../src/Session.cpp
+
 qrc_denas.o: qrc_denas.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o qrc_denas.o qrc_denas.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
+
+moc_Session.o: moc_Session.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_Session.o moc_Session.cpp
 
 ####### Install
 

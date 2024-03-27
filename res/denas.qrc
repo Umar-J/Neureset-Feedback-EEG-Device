@@ -12,5 +12,8 @@
         <file>buttons/chargeButton.svg</file>
         <file>icons/electrodeOff.svg</file>
         <file>icons/electrodeOn.svg</file>
+        <file>buttons/pauseButton.svg</file>
+        <file>buttons/playButton.svg</file>
+        <file>buttons/stopButton.svg</file>
     </qresource>
 </RCC>

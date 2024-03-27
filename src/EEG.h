@@ -13,12 +13,15 @@
 class EEG
 {
 public:
-    EEG();
+    EEG(int);
 
     int getBaseline();
 
+    int getId() const;
+
 private:
     int id;
+    bool isConnected;
 };
 
 #endif // EEG_H

@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->upButton, &QPushButton::pressed, this, &MainWindow::navigateUpMenu);
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
+        connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+
 
 }
 MainWindow::~MainWindow()
@@ -64,6 +66,9 @@ void MainWindow::changePowerStatus(){
         ui->downButton->setEnabled(powerStatus);
         ui->menuButton->setEnabled(powerStatus);
         ui->okButton->setEnabled(powerStatus);
+        ui->pauseButton->setEnabled(powerStatus);
+        ui->playButton->setEnabled(powerStatus);
+        ui->stopButton->setEnabled(powerStatus);
         if (powerStatus){
             navigateToMainMenu();
             //disconnect nodes
@@ -139,7 +144,10 @@ void MainWindow::navigateSubMenu(){
     }
 }
 
-void MainWindow::powerButton(){
+void MainWindow::powerButtonHandler(){
+    //can use this function for 0 battery aswell
+    powerStatus = !powerStatus;
+    changePowerStatus();
 
 }
 

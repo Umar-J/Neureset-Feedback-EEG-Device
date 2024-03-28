@@ -30,6 +30,9 @@ private:
     QListWidget *activeQListWidget;
     void changePowerStatus();
     bool powerStatus;
+    void contactLedHandler();
+    void treatmentLedHandler();
+    void lostLedHandler();
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
 //    void sendLogstoPC();
@@ -52,8 +55,6 @@ private slots:
     void navigateUpMenu();
     void navigateSubMenu();
     void powerButtonHandler();
-//    void navigateToMainMenu();
-//    void navigateBack();
 //    void applyEEG(int);
 
 };

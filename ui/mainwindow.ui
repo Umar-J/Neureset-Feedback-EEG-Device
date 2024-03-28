@@ -689,6 +689,54 @@ QPushButton:pressed {
       <string/>
      </property>
     </widget>
+    <widget class="QPushButton" name="contactLed">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>21</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="treatmentLed">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>0</y>
+       <width>21</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="lostLed">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>40</x>
+       <y>0</y>
+       <width>21</width>
+       <height>25</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
     <zorder>powerOffView</zorder>
     <zorder>statusBarQFrame</zorder>
     <zorder>menuLabel</zorder>
@@ -703,6 +751,9 @@ QPushButton:pressed {
     <zorder>batteryLevelBar</zorder>
     <zorder>stopButton</zorder>
     <zorder>mainMenuListView</zorder>
+    <zorder>contactLed</zorder>
+    <zorder>treatmentLed</zorder>
+    <zorder>lostLed</zorder>
    </widget>
    <widget class="QPushButton" name="applyToSkinButton">
     <property name="geometry">
@@ -726,7 +777,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -774,7 +825,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -812,7 +863,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -850,7 +901,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -888,7 +939,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -926,7 +977,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -964,7 +1015,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1002,7 +1053,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1040,7 +1091,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1078,7 +1129,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1116,7 +1167,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1154,7 +1205,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1192,7 +1243,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1230,7 +1281,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1268,7 +1319,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1306,7 +1357,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1344,7 +1395,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1382,7 +1433,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1420,7 +1471,7 @@ border-radius: 8px;
 }
 
 QPushButton:pressed {
-	background-color: #ffd300;
+	background-color: rgb(87, 227, 137);
 }</string>
     </property>
     <property name="text">
@@ -1447,6 +1498,32 @@ QPushButton:pressed {
     </property>
     <property name="text">
      <string>PC:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>790</x>
+      <y>80</y>
+      <width>62</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>EEGs:</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>80</y>
+      <width>62</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Device:</string>
     </property>
    </widget>
   </widget>

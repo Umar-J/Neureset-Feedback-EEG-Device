@@ -26,7 +26,6 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
 
-
 }
 MainWindow::~MainWindow()
 {
@@ -73,6 +72,20 @@ void MainWindow::changePowerStatus(){
             navigateToMainMenu();
             //disconnect nodes
         }
+
+}
+
+void MainWindow::contactLedHandler(){
+    ui->contactLed->setStyleSheet("background-color:  blue");
+
+}
+
+void MainWindow::treatmentLedHandler(){
+    ui->treatmentLed->setStyleSheet("background-color:  green");
+
+}
+void MainWindow::lostLedHandler(){
+    ui->lostLed->setStyleSheet("background-color:  red");
 
 }
 

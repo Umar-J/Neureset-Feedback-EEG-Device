@@ -21,6 +21,8 @@ MainWindow::MainWindow(QWidget *parent)
         powerStatus = true;
         changePowerStatus();
         connect(ui->downButton, &QPushButton::pressed, this, &MainWindow::navigateDownMenu);
+        connect(ui->upButton, &QPushButton::pressed, this, &MainWindow::navigateUpMenu);
+
 
 
 }
@@ -61,6 +63,7 @@ void MainWindow::changePowerStatus(){
         ui->downButton->setEnabled(powerStatus);
         ui->menuButton->setEnabled(powerStatus);
         ui->okButton->setEnabled(powerStatus);
+
 }
 
 void MainWindow::navigateDownMenu(){
@@ -68,6 +71,17 @@ void MainWindow::navigateDownMenu(){
 
     if (nextIndex > activeQListWidget->count() - 1) {
         nextIndex = 0;
+    }
+
+    activeQListWidget->setCurrentRow(nextIndex);
+}
+
+void MainWindow::navigateUpMenu(){
+
+    int nextIndex = activeQListWidget->currentRow() - 1;
+
+    if (nextIndex < 0) {
+        nextIndex = activeQListWidget->count() - 1;
     }
 
     activeQListWidget->setCurrentRow(nextIndex);

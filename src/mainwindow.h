@@ -46,7 +46,7 @@ private slots:
 //    void stopSession();
 //    void continueSession();
     void navigateDownMenu();
-//    void navigateUpMenu();
+    void navigateUpMenu();
 //    void navigateSubMenu();
 //    void navigateToMainMenu();
 //    void navigateBack();

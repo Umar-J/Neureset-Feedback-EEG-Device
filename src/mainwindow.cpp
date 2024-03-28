@@ -18,16 +18,12 @@ MainWindow::MainWindow(QWidget *parent)
         activeQListWidget->setCurrentRow(0);
         ui->menuLabel->setText(masterMenu->getName());
 
-        powerStatus = true;
+        powerStatus = false;
         changePowerStatus();
         connect(ui->downButton, &QPushButton::pressed, this, &MainWindow::navigateDownMenu);
         connect(ui->upButton, &QPushButton::pressed, this, &MainWindow::navigateUpMenu);
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
-
-
-
-
 
 }
 MainWindow::~MainWindow()
@@ -39,10 +35,12 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     QStringList frequenciesList;
     QStringList programsList;
-
+    // assume newsession and session log have no submenus
     Menu* newSession = new Menu("New Session", {}, m);
     Menu* sessionLog = new Menu("Session Log", {}, m);
     Menu* timeDate = new Menu("Time & Date", {"Change Time","Change Date"}, m); //maybe show time here?
+    //newSession->addChildMenu(new Menu("Session Started",{},newSession));
+    //sessionLog->addChildMenu(new Menu("Showing Logs",{},newSession));
 
     m->addChildMenu(newSession);
     m->addChildMenu(sessionLog);
@@ -56,17 +54,20 @@ void MainWindow::initializeMainMenu(Menu * m){
 }
 
 void MainWindow::changePowerStatus(){
-    activeQListWidget->setVisible(powerStatus);
+        activeQListWidget->setVisible(powerStatus);
         ui->menuLabel->setVisible(powerStatus);
         ui->statusBarQFrame->setVisible(powerStatus);
         ui->treatmentView->setVisible(powerStatus);
         ui->frequencyLabel->setVisible(powerStatus);
         ui->programViewWidget->setVisible(powerStatus);
-
         ui->upButton->setEnabled(powerStatus);
         ui->downButton->setEnabled(powerStatus);
         ui->menuButton->setEnabled(powerStatus);
         ui->okButton->setEnabled(powerStatus);
+        if (powerStatus){
+            navigateToMainMenu();
+            //disconnect nodes
+        }
 
 }
 
@@ -120,12 +121,28 @@ void MainWindow::navigateSubMenu(){
             return;
         }
     }
-
+    // if it has submenus
     if (masterMenu->get(index)->getMenuItems().length() > 0) {
         masterMenu = masterMenu->get(index);
         MainWindow::updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
     }
+    //no submenus
+    else if(masterMenu->get(index)->getMenuItems().length() == 0 && (masterMenu->getName() == "MAIN MENU")) {
+        if (index ==0){
+            updateMenu("New Session", {});
+            qInfo("New Session Function Goes Here");
+        }
+        else if (index ==1){
+            updateMenu("Logs", {});
+            qInfo("Showing Logs function goes here");
+        }
+    }
 }
+
+void MainWindow::powerButton(){
+
+}
+
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
 
     activeQListWidget->clear();
@@ -136,6 +153,7 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 }
 
 void MainWindow::navigateToMainMenu(){
+    //check for ongoing therapy
     while (masterMenu->getName() != "MAIN MENU") {
         masterMenu = masterMenu->getParent();
     }

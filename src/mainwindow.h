@@ -51,6 +51,7 @@ private slots:
     void navigateDownMenu();
     void navigateUpMenu();
     void navigateSubMenu();
+    void powerButton();
 //    void navigateToMainMenu();
 //    void navigateBack();
 //    void applyEEG(int);

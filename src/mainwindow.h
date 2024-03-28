@@ -40,6 +40,9 @@ private:
 //    void deliverTreatment();
 //    void handleContactLoss();
 //    void drainBattery();
+    void updateMenu(const QString selectedMenuItem, const QStringList menuItems);
+    void navigateToMainMenu();
+    void goBack();
 
 private slots:
 //    void pauseSession();
@@ -47,7 +50,7 @@ private slots:
 //    void continueSession();
     void navigateDownMenu();
     void navigateUpMenu();
-//    void navigateSubMenu();
+    void navigateSubMenu();
 //    void navigateToMainMenu();
 //    void navigateBack();
 //    void applyEEG(int);

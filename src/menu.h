@@ -31,6 +31,7 @@ public:
     int getPosition();
     Menu* getParent();
     void addChildMenu(Menu*);
+    Menu* get(int);
 
 private:
     QString name;

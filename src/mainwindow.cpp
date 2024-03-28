@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->setupUi(this);
 
-    masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
+        masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
         initializeMainMenu(masterMenu);
 
@@ -22,6 +22,10 @@ MainWindow::MainWindow(QWidget *parent)
         changePowerStatus();
         connect(ui->downButton, &QPushButton::pressed, this, &MainWindow::navigateDownMenu);
         connect(ui->upButton, &QPushButton::pressed, this, &MainWindow::navigateUpMenu);
+        connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
+        connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
+
+
 
 
 
@@ -85,5 +89,62 @@ void MainWindow::navigateUpMenu(){
     }
 
     activeQListWidget->setCurrentRow(nextIndex);
+}
+
+void MainWindow::navigateSubMenu(){
+    //get menu pos
+    int index = activeQListWidget->currentRow();
+    // prevent crash
+    if (index < 0) return;
+    //change time
+    if (masterMenu->getName() == "Change Time") {
+        if (masterMenu->getMenuItems()[index] == "YES") {
+            qInfo("change time function goes here");
+            goBack();
+            return;
+        }
+        else {
+            goBack();
+            return;
+        }
+    }
+    //change Date
+    if (masterMenu->getName() == "Change Date") {
+        if (masterMenu->getMenuItems()[index] == "YES") {
+            qInfo("change Date function goes here");
+            goBack();
+            return;
+        }
+        else {
+            goBack();
+            return;
+        }
+    }
+
+    if (masterMenu->get(index)->getMenuItems().length() > 0) {
+        masterMenu = masterMenu->get(index);
+        MainWindow::updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+    }
+}
+void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
+
+    activeQListWidget->clear();
+    activeQListWidget->addItems(menuItems);
+    activeQListWidget->setCurrentRow(0);
+
+    ui->menuLabel->setText(selectedMenuItem);
+}
+
+void MainWindow::navigateToMainMenu(){
+    while (masterMenu->getName() != "MAIN MENU") {
+        masterMenu = masterMenu->getParent();
+    }
+
+    updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+}
+void MainWindow::goBack(){
+    qInfo("go Back Called");
+    masterMenu = masterMenu->getParent();
+    updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
 }
 

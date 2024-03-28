@@ -22,3 +22,7 @@ int Menu::getPosition(){ return position; }
 void Menu::addChildMenu(Menu* newMenu){
     subMenus.push_back(newMenu);
 }
+
+Menu *Menu::get(int i){
+    return subMenus[i];
+}

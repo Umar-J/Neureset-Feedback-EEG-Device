@@ -41,11 +41,11 @@ private:
 //    void handleContactLoss();
 //    void drainBattery();
 
-//private slots:
+private slots:
 //    void pauseSession();
 //    void stopSession();
 //    void continueSession();
-//    void navigateDownMenu();
+    void navigateDownMenu();
 //    void navigateUpMenu();
 //    void navigateSubMenu();
 //    void navigateToMainMenu();

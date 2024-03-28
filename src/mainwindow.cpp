@@ -5,8 +5,9 @@ MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-    powerStatus = true;
+
     ui->setupUi(this);
+
     masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
         initializeMainMenu(masterMenu);
@@ -16,7 +17,12 @@ MainWindow::MainWindow(QWidget *parent)
         activeQListWidget->addItems(masterMenu->getMenuItems());
         activeQListWidget->setCurrentRow(0);
         ui->menuLabel->setText(masterMenu->getName());
+
+        powerStatus = true;
         changePowerStatus();
+        connect(ui->downButton, &QPushButton::pressed, this, &MainWindow::navigateDownMenu);
+
+
 }
 MainWindow::~MainWindow()
 {
@@ -55,5 +61,15 @@ void MainWindow::changePowerStatus(){
         ui->downButton->setEnabled(powerStatus);
         ui->menuButton->setEnabled(powerStatus);
         ui->okButton->setEnabled(powerStatus);
+}
+
+void MainWindow::navigateDownMenu(){
+    int nextIndex = activeQListWidget->currentRow() + 1;
+
+    if (nextIndex > activeQListWidget->count() - 1) {
+        nextIndex = 0;
+    }
+
+    activeQListWidget->setCurrentRow(nextIndex);
 }
 

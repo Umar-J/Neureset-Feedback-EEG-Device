@@ -198,6 +198,7 @@ void MainWindow::applyElectrode(int i){
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
         qInfo("eeg at %d is disconected", i);
         qInfo("%d", isConnected[i]);
+
     }
 
 }

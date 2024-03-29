@@ -7,7 +7,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
-
+        //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
+        fill_n(isConnected, 21, false);
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
         initializeMainMenu(masterMenu);
@@ -25,6 +26,17 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+        for(int i = 0; i <= 20; i++) {
+            QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
+            //can put connect here
+            connect(button, &QPushButton::clicked, this, [this, i]() { applyElectrode(i); });
+            if(button) {
+                electrodes.append(button);
+            }
+        }
+
+        //electrodes.at(0)->setStyleSheet("background-color:  red");
+        //electrodes.at(20)->setStyleSheet("background-color:  red");
 
 }
 MainWindow::~MainWindow()
@@ -87,6 +99,15 @@ void MainWindow::treatmentLedHandler(){
 void MainWindow::lostLedHandler(){
     ui->lostLed->setStyleSheet("background-color:  red");
 
+}
+
+bool MainWindow::electrodeConnectionCheck(){
+    for (bool x: isConnected){
+        if (x==false){
+            return false;
+        }
+    }
+    return true;
 }
 
 void MainWindow::navigateDownMenu(){
@@ -162,6 +183,10 @@ void MainWindow::powerButtonHandler(){
     powerStatus = !powerStatus;
     changePowerStatus();
 
+}
+
+void MainWindow::applyElectrode(int i){
+    isConnected[i] = !isConnected[i]; // flip on click
 }
 
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {

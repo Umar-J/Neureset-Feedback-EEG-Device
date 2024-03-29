@@ -7,6 +7,7 @@
 #include "menu.h"
 #include "EEG.h"
 #include <QListWidget>
+#include <QPushButton>
 using namespace std;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -22,6 +23,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    //vector<bool> isConnected;
+    bool isConnected [21];
+    QVector<QPushButton*> electrodes;
     Menu* masterMenu;
     Menu* mainMenu;
     void initializeMainMenu(Menu*);
@@ -33,6 +37,8 @@ private:
     void contactLedHandler();
     void treatmentLedHandler();
     void lostLedHandler();
+    bool electrodeConnectionCheck();
+
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
 //    void sendLogstoPC();
@@ -55,6 +61,7 @@ private slots:
     void navigateUpMenu();
     void navigateSubMenu();
     void powerButtonHandler();
+    void applyElectrode(int);
 //    void applyEEG(int);
 
 };

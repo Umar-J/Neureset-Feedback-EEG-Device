@@ -187,7 +187,20 @@ void MainWindow::powerButtonHandler(){
 
 void MainWindow::applyElectrode(int i){
     isConnected[i] = !isConnected[i]; // flip on click
+    if (isConnected[i]){
+        electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
+        qInfo("eeg at %d is connected", i);
+        qInfo("%d", isConnected[i]);
+    }else{
+        electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
+        qInfo("eeg at %d is disconected", i);
+        qInfo("%d", isConnected[i]);
+    }
+
 }
+
+
+
 
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
 

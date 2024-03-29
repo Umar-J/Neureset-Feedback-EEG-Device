@@ -104,9 +104,11 @@ void MainWindow::lostLedHandler(){
 bool MainWindow::electrodeConnectionCheck(){
     for (bool x: isConnected){
         if (x==false){
+            qInfo("all nodes not connected");
             return false;
         }
     }
+    qInfo("all nodes connected!!!!!!!!");
     return true;
 }
 
@@ -191,6 +193,7 @@ void MainWindow::applyElectrode(int i){
         electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
         qInfo("eeg at %d is connected", i);
         qInfo("%d", isConnected[i]);
+        electrodeConnectionCheck();
     }else{
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
         qInfo("eeg at %d is disconected", i);

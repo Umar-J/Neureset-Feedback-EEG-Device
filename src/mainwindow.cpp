@@ -261,11 +261,20 @@ void MainWindow::setDate(){
 
     output << "Current Date: " << currentDate.toString() << Qt::endl;
 
-    output << "Enter the new Date (YY/MM/DD): " << Qt::endl;
+    output << "Enter the new Date (YYYY/MM/DD): " << Qt::endl;
     QString newDate = input.readLine();
 
+    QDate newUserDate = QDate::fromString(newDate, "yyyy/MM/dd");
 
-    output << "New Date: " << newDate << Qt::endl;
+    // Check if parsing was successful
+    if (!newUserDate.isValid()) {
+        QTextStream(stderr) << "Invalid date format. Please use YYYY/MM/DD format."<< Qt::endl;
+        return;
+    }
+    currentDate = newUserDate;
+
+
+    output << "New Date: " << currentDate.toString() << Qt::endl;
 }
 
 

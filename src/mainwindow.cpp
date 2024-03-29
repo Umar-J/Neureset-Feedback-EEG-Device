@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <iostream>
+#include <QTextStream>
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -25,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+
 
 }
 MainWindow::~MainWindow()
@@ -52,6 +55,10 @@ void MainWindow::initializeMainMenu(Menu * m){
     Menu* clearHistory = new Menu("Change Date", {"YES","NO"}, timeDate);
     timeDate->addChildMenu(viewHistory);
     timeDate->addChildMenu(clearHistory);
+
+    //initialize the timer for the device
+    timer = new QTimer(this);
+    timer->setInterval(60000);
 }
 
 void MainWindow::changePowerStatus(){
@@ -118,8 +125,9 @@ void MainWindow::navigateSubMenu(){
     //change time
     if (masterMenu->getName() == "Change Time") {
         if (masterMenu->getMenuItems()[index] == "YES") {
-            qInfo("change time function goes here");
-            goBack();
+            setTime();
+            //qInfo("change time function goes here");
+            //goBack();
             return;
         }
         else {
@@ -130,6 +138,7 @@ void MainWindow::navigateSubMenu(){
     //change Date
     if (masterMenu->getName() == "Change Date") {
         if (masterMenu->getMenuItems()[index] == "YES") {
+            setDate();
             qInfo("change Date function goes here");
             goBack();
             return;
@@ -161,6 +170,15 @@ void MainWindow::powerButtonHandler(){
     //can use this function for 0 battery aswell
     powerStatus = !powerStatus;
     changePowerStatus();
+    //check if power is on
+    if (powerStatus){
+        //start the timer
+        connect(timer, SIGNAL(timeout()), this, SLOT(drainBattery()));
+        timer->start();
+    }else{
+        //stop timer as power is off
+        timer->stop();
+    }
 
 }
 
@@ -186,4 +204,70 @@ void MainWindow::goBack(){
     masterMenu = masterMenu->getParent();
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
 }
+
+void MainWindow::drainBattery(){
+    ///check if device is on
+    if (powerStatus){
+        //Check for low battery
+        if (ui->batteryLevelBar->value() < 20 && !lowBatteryMessage){
+            qInfo("Low Battery");
+            lowBatteryMessage = true; // display the message only once
+        }
+        //check if battery level is not 0
+        if (ui->batteryLevelBar->value() != 0){
+            //decrease by 1
+            ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 1);
+        }else{
+            //turn off the device
+            qInfo("Power Off");
+            powerStatus = false;
+            changePowerStatus();
+            timer->stop();
+        }
+    }
+}
+
+void MainWindow::setTime(){
+
+    QTime currentTime = QTime::currentTime();
+
+    QTextStream input(stdin);
+    QTextStream output(stdout);
+
+    output << "Current Time: " << currentTime.toString() << Qt::endl;
+
+    output << "Enter the new Time (HH:mm:ss): " << Qt::endl;
+    QString newTime = input.readLine();
+
+    QTime newUserTime = QTime::fromString(newTime, "HH:mm:ss");
+    // Check if parsing was successful
+    if (!newUserTime.isValid()) {
+        QTextStream(stderr) << "Invalid time format. Please use HH:mm:ss format." << Qt::endl;
+        return;
+    }
+    currentTime = newUserTime;
+
+
+   output<<"New Time: " << currentTime.toString() << Qt::endl;
+
+}
+
+void MainWindow::setDate(){
+
+    QDate currentDate = QDate::currentDate();
+
+    QTextStream input(stdin);
+    QTextStream output(stdout);
+
+    output << "Current Date: " << currentDate.toString() << Qt::endl;
+
+    output << "Enter the new Date (YY/MM/DD): " << Qt::endl;
+    QString newDate = input.readLine();
+
+
+    output << "New Date: " << newDate << Qt::endl;
+}
+
+
+
 

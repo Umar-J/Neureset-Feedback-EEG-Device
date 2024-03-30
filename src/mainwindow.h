@@ -8,6 +8,8 @@
 #include "EEG.h"
 #include <QListWidget>
 #include <QDateTime>
+#include <pthread.h>
+#include <unistd.h>
 using namespace std;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -30,14 +32,19 @@ private:
     QVector<EEG*> eegList;
     QListWidget *activeQListWidget;
     QTimer *timer;
-    void changePowerStatus();
+    QTimer *timerForTime;
+    QTime currentTime;
+    QDate currentDate;
     bool powerStatus;
     bool lowBatteryMessage = false;
+    void changePowerStatus();
     void contactLedHandler();
     void treatmentLedHandler();
     void lostLedHandler();
     void setTime();
     void setDate();
+    void displayCurrentDateAndTime();
+    void setVisibility(bool powerStatus);
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
 //    void sendLogstoPC();

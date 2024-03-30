@@ -3,12 +3,18 @@
 #include <QDebug>
 #include <iostream>
 #include <QTextStream>
+//forward reference
+void* updateTime(void*);
+void* updateDate(void*);
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
 
     ui->setupUi(this);
+        //initialize the current time and date
+        currentTime = QTime::currentTime();
+        currentDate = QDate::currentDate();
 
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
@@ -27,6 +33,19 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+        connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::setTime);
+        pthread_t timeThread;
+        pthread_create(&timeThread, nullptr, updateTime, &currentTime);
+        connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::setDate);
+        pthread_t dateThread;
+        pthread_create(&dateThread, nullptr, updateDate, &currentDate);
+
+        //visibility of main time and date widget and battery
+        setVisibility(powerStatus);
+
+        //Time and Date Widgets (use for updating time and date)
+        ui->timeEdit->setVisible(false);
+        ui->dateEdit->setVisible(false);
 
 
 }
@@ -58,7 +77,12 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the device
     timer = new QTimer(this);
-    timer->setInterval(60000);
+    timer->setInterval(60000); // every minute
+
+    //initialize the timer for time
+    timerForTime = new QTimer(this);
+    connect(timerForTime, &QTimer::timeout, this, &MainWindow::displayCurrentDateAndTime);
+
 }
 
 void MainWindow::changePowerStatus(){
@@ -125,8 +149,7 @@ void MainWindow::navigateSubMenu(){
     //change time
     if (masterMenu->getName() == "Change Time") {
         if (masterMenu->getMenuItems()[index] == "YES") {
-            setTime();
-            //qInfo("change time function goes here");
+            ui->timeEdit->setVisible(true);
             //goBack();
             return;
         }
@@ -138,9 +161,8 @@ void MainWindow::navigateSubMenu(){
     //change Date
     if (masterMenu->getName() == "Change Date") {
         if (masterMenu->getMenuItems()[index] == "YES") {
-            setDate();
-            qInfo("change Date function goes here");
-            goBack();
+            ui->dateEdit->setVisible(true);
+            //goBack();
             return;
         }
         else {
@@ -170,14 +192,19 @@ void MainWindow::powerButtonHandler(){
     //can use this function for 0 battery aswell
     powerStatus = !powerStatus;
     changePowerStatus();
+    setVisibility(powerStatus); //timeDate and battery widgets
     //check if power is on
     if (powerStatus){
         //start the timer
         connect(timer, SIGNAL(timeout()), this, SLOT(drainBattery()));
         timer->start();
+        timerForTime->start(10000); //every minute
     }else{
         //stop timer as power is off
         timer->stop();
+        //Time and Date Widgets (use for updating time and date)
+        ui->timeEdit->setVisible(false);
+        ui->dateEdit->setVisible(false);
     }
 
 }
@@ -198,15 +225,21 @@ void MainWindow::navigateToMainMenu(){
     }
 
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+    //Time and Date Widgets (use for updating time and date)
+    ui->timeEdit->setVisible(false);
+    ui->dateEdit->setVisible(false);
 }
 void MainWindow::goBack(){
     qInfo("go Back Called");
     masterMenu = masterMenu->getParent();
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+    //Time and Date Widgets (use for updating time and date)
+    ui->timeEdit->setVisible(false);
+    ui->dateEdit->setVisible(false);
 }
 
 void MainWindow::drainBattery(){
-    ///check if device is on
+    //check if device is on
     if (powerStatus){
         //Check for low battery
         if (ui->batteryLevelBar->value() < 20 && !lowBatteryMessage){
@@ -227,54 +260,59 @@ void MainWindow::drainBattery(){
     }
 }
 
+void MainWindow::setVisibility(bool powerStatus){
+    //check if power is on to make it visible
+    if (powerStatus){
+        ui->dateTimeEdit->setVisible(true);
+        ui->batteryLevelBar->setVisible(true);
+    }else{
+        ui->dateTimeEdit->setVisible(false);
+        ui->batteryLevelBar->setVisible(false);
+    }
+
+}
+
+void MainWindow::displayCurrentDateAndTime(){
+
+    ui->dateTimeEdit->setTime(currentTime);
+    ui->dateTimeEdit->setDate(currentDate);
+
+}
+
 void MainWindow::setTime(){
 
-    QTime currentTime = QTime::currentTime();
-
-    QTextStream input(stdin);
-    QTextStream output(stdout);
-
-    output << "Current Time: " << currentTime.toString() << Qt::endl;
-
-    output << "Enter the new Time (HH:mm:ss): " << Qt::endl;
-    QString newTime = input.readLine();
-
-    QTime newUserTime = QTime::fromString(newTime, "HH:mm:ss");
-    // Check if parsing was successful
-    if (!newUserTime.isValid()) {
-        QTextStream(stderr) << "Invalid time format. Please use HH:mm:ss format." << Qt::endl;
-        return;
-    }
-    currentTime = newUserTime;
-
-
-   output<<"New Time: " << currentTime.toString() << Qt::endl;
-
+    currentTime = ui->timeEdit->time();
+    ui->dateTimeEdit->setTime(currentTime);
 }
 
 void MainWindow::setDate(){
 
-    QDate currentDate = QDate::currentDate();
+    currentDate = ui->dateEdit->date();
+    ui->dateEdit->setDate(currentDate);
+}
 
-    QTextStream input(stdin);
-    QTextStream output(stdout);
-
-    output << "Current Date: " << currentDate.toString() << Qt::endl;
-
-    output << "Enter the new Date (YYYY/MM/DD): " << Qt::endl;
-    QString newDate = input.readLine();
-
-    QDate newUserDate = QDate::fromString(newDate, "yyyy/MM/dd");
-
-    // Check if parsing was successful
-    if (!newUserDate.isValid()) {
-        QTextStream(stderr) << "Invalid date format. Please use YYYY/MM/DD format."<< Qt::endl;
-        return;
+void* updateTime(void* arg){
+    QTime* currentTime = reinterpret_cast<QTime*>(arg);
+    while (true) {
+        //qDebug() << "Updating timer...";
+        sleep(60); // Sleep for 60 seconds
+        *currentTime = currentTime->addSecs(60); // add 1 minute
+        //qDebug() << "Current Time:" << currentTime->toString("hh:mm:ss");
     }
-    currentDate = newUserDate;
+    return nullptr;
 
+}
 
-    output << "New Date: " << currentDate.toString() << Qt::endl;
+void* updateDate(void* arg){
+    QDate* currentDate = reinterpret_cast<QDate*>(arg);
+    while (true) {
+        //qDebug() << "Updating date...";
+        sleep(86400000); // Sleep for 1 day
+        *currentDate = currentDate->addDays(1) ;// Increment by 1 day
+        //qDebug() << "Current Date:" << currentDate->toString("yyyy/MM/dd");
+    }
+    return nullptr;
+
 }
 
 

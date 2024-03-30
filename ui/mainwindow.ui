@@ -744,6 +744,45 @@ QPushButton:pressed {
       <string/>
      </property>
     </widget>
+    <widget class="QTimeEdit" name="timeEdit">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>120</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QDateEdit" name="dateEdit">
+     <property name="geometry">
+      <rect>
+       <x>220</x>
+       <y>140</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QDateTimeEdit" name="dateTimeEdit">
+     <property name="enabled">
+      <bool>true</bool>
+     </property>
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>270</y>
+       <width>141</width>
+       <height>26</height>
+      </rect>
+     </property>
+     <property name="readOnly">
+      <bool>true</bool>
+     </property>
+    </widget>
     <zorder>powerOffView</zorder>
     <zorder>statusBarQFrame</zorder>
     <zorder>menuLabel</zorder>
@@ -761,6 +800,9 @@ QPushButton:pressed {
     <zorder>contactLed</zorder>
     <zorder>treatmentLed</zorder>
     <zorder>lostLed</zorder>
+    <zorder>timeEdit</zorder>
+    <zorder>dateEdit</zorder>
+    <zorder>dateTimeEdit</zorder>
    </widget>
    <widget class="QPushButton" name="applyToSkinButton">
     <property name="geometry">

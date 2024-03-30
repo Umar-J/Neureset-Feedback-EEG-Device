@@ -1,14 +1,26 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+#include <iostream>
+#include <QTextStream>
+//forward reference
+void* updateTime(void*);
+void* updateDate(void*);
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
 
     ui->setupUi(this);
+
+        //initialize the current time and date
+        currentTime = QTime::currentTime();
+        currentDate = QDate::currentDate();
+
+
         //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
         fill_n(isConnected, 21, false);
+
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
         initializeMainMenu(masterMenu);
@@ -26,6 +38,22 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+
+        connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::setTime);
+        pthread_t timeThread;
+        pthread_create(&timeThread, nullptr, updateTime, &currentTime);
+        connect(ui->dateEdit, &QDateEdit::dateChanged, this, &MainWindow::setDate);
+        pthread_t dateThread;
+        pthread_create(&dateThread, nullptr, updateDate, &currentDate);
+
+        //visibility of main time and date widget and battery
+        setVisibility(powerStatus);
+
+        //Time and Date Widgets (use for updating time and date)
+        ui->timeEdit->setVisible(false);
+        ui->dateEdit->setVisible(false);
+
+
         for(int i = 0; i <= 20; i++) {
             QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
             //can put connect here
@@ -64,6 +92,15 @@ void MainWindow::initializeMainMenu(Menu * m){
     Menu* clearHistory = new Menu("Change Date", {"YES","NO"}, timeDate);
     timeDate->addChildMenu(viewHistory);
     timeDate->addChildMenu(clearHistory);
+
+    //initialize the timer for the device
+    timer = new QTimer(this);
+    timer->setInterval(60000); // every minute
+
+    //initialize the timer for time
+    timerForTime = new QTimer(this);
+    connect(timerForTime, &QTimer::timeout, this, &MainWindow::displayCurrentDateAndTime);
+
 }
 
 void MainWindow::changePowerStatus(){
@@ -141,8 +178,8 @@ void MainWindow::navigateSubMenu(){
     //change time
     if (masterMenu->getName() == "Change Time") {
         if (masterMenu->getMenuItems()[index] == "YES") {
-            qInfo("change time function goes here");
-            goBack();
+            ui->timeEdit->setVisible(true);
+            //goBack();
             return;
         }
         else {
@@ -153,8 +190,8 @@ void MainWindow::navigateSubMenu(){
     //change Date
     if (masterMenu->getName() == "Change Date") {
         if (masterMenu->getMenuItems()[index] == "YES") {
-            qInfo("change Date function goes here");
-            goBack();
+            ui->dateEdit->setVisible(true);
+            //goBack();
             return;
         }
         else {
@@ -184,6 +221,20 @@ void MainWindow::powerButtonHandler(){
     //can use this function for 0 battery aswell
     powerStatus = !powerStatus;
     changePowerStatus();
+    setVisibility(powerStatus); //timeDate and battery widgets
+    //check if power is on
+    if (powerStatus){
+        //start the timer
+        connect(timer, SIGNAL(timeout()), this, SLOT(drainBattery()));
+        timer->start();
+        timerForTime->start(10000); //every minute
+    }else{
+        //stop timer as power is off
+        timer->stop();
+        //Time and Date Widgets (use for updating time and date)
+        ui->timeEdit->setVisible(false);
+        ui->dateEdit->setVisible(false);
+    }
 
 }
 
@@ -222,10 +273,96 @@ void MainWindow::navigateToMainMenu(){
     }
 
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+    //Time and Date Widgets (use for updating time and date)
+    ui->timeEdit->setVisible(false);
+    ui->dateEdit->setVisible(false);
 }
 void MainWindow::goBack(){
     qInfo("go Back Called");
     masterMenu = masterMenu->getParent();
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
+    //Time and Date Widgets (use for updating time and date)
+    ui->timeEdit->setVisible(false);
+    ui->dateEdit->setVisible(false);
 }
+
+void MainWindow::drainBattery(){
+    //check if device is on
+    if (powerStatus){
+        //Check for low battery
+        if (ui->batteryLevelBar->value() < 20 && !lowBatteryMessage){
+            qInfo("Low Battery");
+            lowBatteryMessage = true; // display the message only once
+        }
+        //check if battery level is not 0
+        if (ui->batteryLevelBar->value() != 0){
+            //decrease by 1
+            ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 1);
+        }else{
+            //turn off the device
+            qInfo("Power Off");
+            powerStatus = false;
+            changePowerStatus();
+            timer->stop();
+        }
+    }
+}
+
+void MainWindow::setVisibility(bool powerStatus){
+    //check if power is on to make it visible
+    if (powerStatus){
+        ui->dateTimeEdit->setVisible(true);
+        ui->batteryLevelBar->setVisible(true);
+    }else{
+        ui->dateTimeEdit->setVisible(false);
+        ui->batteryLevelBar->setVisible(false);
+    }
+
+}
+
+void MainWindow::displayCurrentDateAndTime(){
+
+    ui->dateTimeEdit->setTime(currentTime);
+    ui->dateTimeEdit->setDate(currentDate);
+
+}
+
+void MainWindow::setTime(){
+
+    currentTime = ui->timeEdit->time();
+    ui->dateTimeEdit->setTime(currentTime);
+}
+
+void MainWindow::setDate(){
+
+    currentDate = ui->dateEdit->date();
+    ui->dateEdit->setDate(currentDate);
+}
+
+void* updateTime(void* arg){
+    QTime* currentTime = reinterpret_cast<QTime*>(arg);
+    while (true) {
+        //qDebug() << "Updating timer...";
+        sleep(60); // Sleep for 60 seconds
+        *currentTime = currentTime->addSecs(60); // add 1 minute
+        //qDebug() << "Current Time:" << currentTime->toString("hh:mm:ss");
+    }
+    return nullptr;
+
+}
+
+void* updateDate(void* arg){
+    QDate* currentDate = reinterpret_cast<QDate*>(arg);
+    while (true) {
+        //qDebug() << "Updating date...";
+        sleep(86400000); // Sleep for 1 day
+        *currentDate = currentDate->addDays(1) ;// Increment by 1 day
+        //qDebug() << "Current Date:" << currentDate->toString("yyyy/MM/dd");
+    }
+    return nullptr;
+
+}
+
+
+
 

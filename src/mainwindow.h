@@ -7,7 +7,13 @@
 #include "menu.h"
 #include "EEG.h"
 #include <QListWidget>
+
+#include <QDateTime>
+#include <pthread.h>
+#include <unistd.h>
+
 #include <QPushButton>
+
 using namespace std;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -32,23 +38,33 @@ private:
     QVector<Session*> sessionsLog;
     QVector<EEG*> eegList;
     QListWidget *activeQListWidget;
-    void changePowerStatus();
+    QTimer *timer;
+    QTimer *timerForTime;
+    QTime currentTime;
+    QDate currentDate;
     bool powerStatus;
+    bool lowBatteryMessage = false;
+    void changePowerStatus();
     void contactLedHandler();
     void treatmentLedHandler();
     void lostLedHandler();
+
+    void setTime();
+    void setDate();
+    void displayCurrentDateAndTime();
+    void setVisibility(bool powerStatus);
+
     bool electrodeConnectionCheck();
+
 
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
 //    void sendLogstoPC();
-//    void setDateTime();
 //    bool checkConnection(QVector<EEG*>);
 //    int calculateAverageBaseline();
 //    void shutdown();
 //    void deliverTreatment();
 //    void handleContactLoss();
-//    void drainBattery();
     void updateMenu(const QString selectedMenuItem, const QStringList menuItems);
     void navigateToMainMenu();
     void goBack();
@@ -61,7 +77,11 @@ private slots:
     void navigateUpMenu();
     void navigateSubMenu();
     void powerButtonHandler();
+
+    void drainBattery();
+
     void applyElectrode(int);
+
 //    void applyEEG(int);
 
 };

@@ -12,9 +12,14 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
+
         //initialize the current time and date
         currentTime = QTime::currentTime();
         currentDate = QDate::currentDate();
+
+
+        //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
+        fill_n(isConnected, 21, false);
 
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
@@ -33,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->okButton, &QPushButton::pressed, this, &MainWindow::navigateSubMenu);
         connect(ui->menuButton, &QPushButton::pressed, this, &MainWindow::navigateToMainMenu);
         connect(ui->powerButton, &QPushButton::released, this, &MainWindow::powerButtonHandler);
+
         connect(ui->timeEdit, &QTimeEdit::timeChanged, this, &MainWindow::setTime);
         pthread_t timeThread;
         pthread_create(&timeThread, nullptr, updateTime, &currentTime);
@@ -47,6 +53,18 @@ MainWindow::MainWindow(QWidget *parent)
         ui->timeEdit->setVisible(false);
         ui->dateEdit->setVisible(false);
 
+
+        for(int i = 0; i <= 20; i++) {
+            QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
+            //can put connect here
+            connect(button, &QPushButton::clicked, this, [this, i]() { applyElectrode(i); });
+            if(button) {
+                electrodes.append(button);
+            }
+        }
+
+        //electrodes.at(0)->setStyleSheet("background-color:  red");
+        //electrodes.at(20)->setStyleSheet("background-color:  red");
 
 }
 MainWindow::~MainWindow()
@@ -118,6 +136,17 @@ void MainWindow::treatmentLedHandler(){
 void MainWindow::lostLedHandler(){
     ui->lostLed->setStyleSheet("background-color:  red");
 
+}
+
+bool MainWindow::electrodeConnectionCheck(){
+    for (bool x: isConnected){
+        if (x==false){
+            qInfo("all nodes not connected");
+            return false;
+        }
+    }
+    qInfo("all nodes connected!!!!!!!!");
+    return true;
 }
 
 void MainWindow::navigateDownMenu(){
@@ -208,6 +237,25 @@ void MainWindow::powerButtonHandler(){
     }
 
 }
+
+void MainWindow::applyElectrode(int i){
+    isConnected[i] = !isConnected[i]; // flip on click
+    if (isConnected[i]){
+        electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
+        qInfo("eeg at %d is connected", i);
+        qInfo("%d", isConnected[i]);
+        electrodeConnectionCheck();
+    }else{
+        electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
+        qInfo("eeg at %d is disconected", i);
+        qInfo("%d", isConnected[i]);
+
+    }
+
+}
+
+
+
 
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
 

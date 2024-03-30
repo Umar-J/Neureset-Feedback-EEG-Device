@@ -7,9 +7,13 @@
 #include "menu.h"
 #include "EEG.h"
 #include <QListWidget>
+
 #include <QDateTime>
 #include <pthread.h>
 #include <unistd.h>
+
+#include <QPushButton>
+
 using namespace std;
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -25,6 +29,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    //vector<bool> isConnected;
+    bool isConnected [21];
+    QVector<QPushButton*> electrodes;
     Menu* masterMenu;
     Menu* mainMenu;
     void initializeMainMenu(Menu*);
@@ -41,10 +48,15 @@ private:
     void contactLedHandler();
     void treatmentLedHandler();
     void lostLedHandler();
+
     void setTime();
     void setDate();
     void displayCurrentDateAndTime();
     void setVisibility(bool powerStatus);
+
+    bool electrodeConnectionCheck();
+
+
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
 //    void sendLogstoPC();
@@ -65,7 +77,11 @@ private slots:
     void navigateUpMenu();
     void navigateSubMenu();
     void powerButtonHandler();
+
     void drainBattery();
+
+    void applyElectrode(int);
+
 //    void applyEEG(int);
 
 };

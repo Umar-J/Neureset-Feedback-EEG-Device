@@ -69,10 +69,14 @@ private:
     void navigateToMainMenu();
     void goBack();
 
+    Session* currentSession;
+    Session* startSession();
+
 private slots:
-//    void pauseSession();
-//    void stopSession();
-//    void continueSession();
+    void pauseSession();
+    void stopSession();
+    void playSession();
+
     void navigateDownMenu();
     void navigateUpMenu();
     void navigateSubMenu();

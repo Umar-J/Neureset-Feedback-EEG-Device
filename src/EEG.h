@@ -1,6 +1,8 @@
 #ifndef EEG_H
 #define EEG_H
 
+#include <QRandomGenerator>
+
 /* Purpose of class: repersents an individual EEG site
  *
  * Data Members:
@@ -22,6 +24,7 @@ public:
 private:
     int id;
     bool isConnected;
+    int baseline;
 };
 
 #endif // EEG_H

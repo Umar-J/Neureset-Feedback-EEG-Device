@@ -59,7 +59,6 @@ private:
 
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
-//    void sendLogstoPC();
 //    bool checkConnection(QVector<EEG*>);
 //    int calculateAverageBaseline();
 //    void shutdown();
@@ -68,6 +67,7 @@ private:
     void updateMenu(const QString selectedMenuItem, const QStringList menuItems);
     void navigateToMainMenu();
     void goBack();
+    void sendLogstoPC();
 
 private slots:
 //    void pauseSession();

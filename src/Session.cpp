@@ -21,5 +21,5 @@ int Session::getTime() {return time; }
 int Session::getStartTime() {return startTime; }
 int Session::getEndTime() {return endTime; }
 
-QList<int> Session::getStartAverages() {return startAverages; }
-QList<int> Session::getEndAverages() { return endAverages; }
+QVector<int> Session::getStartAverages() {return startAverages; }
+QVector<int> Session::getEndAverages() { return endAverages; }

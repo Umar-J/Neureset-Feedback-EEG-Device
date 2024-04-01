@@ -40,8 +40,8 @@ public:
     int getStartTime();
     int getEndTime();
 
-    QList<int> getStartAverages();
-    QList<int> getEndAverages();
+    QVector<int> getStartAverages();
+    QVector<int> getEndAverages();
 
 private:
     QTimer* timer;
@@ -51,8 +51,8 @@ private:
     int startTime;
     int endTime;
 
-    QList<int> startAverages; // Store start averages for each of the 21 EEG sites
-    QList<int> endAverages; // Store end averages for each of the 21 EEG sites
+    QVector<int> startAverages; // Store start averages for each of the 21 EEG sites
+    QVector<int> endAverages; // Store end averages for each of the 21 EEG sites
 };
 
 #endif // SESSION_H

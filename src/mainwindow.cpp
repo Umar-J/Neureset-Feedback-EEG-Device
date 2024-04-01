@@ -66,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
         //electrodes.at(0)->setStyleSheet("background-color:  red");
         //electrodes.at(20)->setStyleSheet("background-color:  red");
 
+        //testing session logs
+        //Session* s1 = new Session("Sesssion 1", 100);
+        //sessionsLog.append(s1);
+
 }
 MainWindow::~MainWindow()
 {
@@ -78,7 +82,7 @@ void MainWindow::initializeMainMenu(Menu * m){
     QStringList programsList;
     // assume newsession and session log have no submenus
     Menu* newSession = new Menu("New Session", {}, m);
-    Menu* sessionLog = new Menu("Session Log", {}, m);
+    Menu* sessionLog = new Menu("Session Log", {"Upload To Pc","Preview Logs"}, m);
     Menu* timeDate = new Menu("Time & Date", {"Change Time","Change Date"}, m); //maybe show time here?
     //newSession->addChildMenu(new Menu("Session Started",{},newSession));
     //sessionLog->addChildMenu(new Menu("Showing Logs",{},newSession));
@@ -87,6 +91,10 @@ void MainWindow::initializeMainMenu(Menu * m){
     m->addChildMenu(sessionLog);
     m->addChildMenu(timeDate);
 
+    Menu* uploadLogsMenu = new Menu("Upload To Pc", {"YES", "NO"}, sessionLog);
+    Menu* previewLogs = new Menu("Preview Logs", {"YES", "NO"}, sessionLog);
+    sessionLog->addChildMenu(uploadLogsMenu);
+    sessionLog->addChildMenu(previewLogs);
 
     Menu* viewHistory = new Menu("Change Time",{"YES","NO"}, timeDate);
     Menu* clearHistory = new Menu("Change Date", {"YES","NO"}, timeDate);
@@ -175,6 +183,7 @@ void MainWindow::navigateSubMenu(){
     int index = activeQListWidget->currentRow();
     // prevent crash
     if (index < 0) return;
+
     //change time
     if (masterMenu->getName() == "Change Time") {
         if (masterMenu->getMenuItems()[index] == "YES") {
@@ -199,6 +208,52 @@ void MainWindow::navigateSubMenu(){
             return;
         }
     }
+
+    //uploading to Pc
+    if (masterMenu->getName() == "Upload To Pc"){
+        if (masterMenu->getMenuItems() [index] == "YES"){
+            sendLogstoPC();
+            return;
+        }
+        else {
+            ui->textBrowser->clear();
+            goBack();
+            return;
+        }
+    }
+    //preview logs
+    if (masterMenu->getName() == "Preview Logs"){
+        if (masterMenu->getMenuItems() [index] == "YES"){
+
+            if(!sessionsLog.isEmpty()){
+
+                QStringList sessionList;
+
+                const int numSessions = sessionsLog.size();
+
+                for (int i = 0; i < numSessions; ++i) {
+                    //need to add time and date to this preview:
+                    sessionList.append(QString("%1 ").arg(sessionsLog.at(i)->getName()));
+                }
+
+                activeQListWidget->clear();
+                ui->menuLabel->setText("Preview Logs");
+                activeQListWidget->addItems(sessionList);
+                activeQListWidget->setCurrentRow(0);
+                ui->menuLabel->setText("Preview Logs");
+
+            }else{
+                qInfo("Session logs is empty");
+            }
+            return;
+
+        }
+        else {
+            goBack();
+            return;
+        }
+    }
+
     // if it has submenus
     if (masterMenu->get(index)->getMenuItems().length() > 0) {
         masterMenu = masterMenu->get(index);
@@ -209,10 +264,6 @@ void MainWindow::navigateSubMenu(){
         if (index ==0){
             updateMenu("New Session", {});
             qInfo("New Session Function Goes Here");
-        }
-        else if (index ==1){
-            updateMenu("Logs", {});
-            qInfo("Showing Logs function goes here");
         }
     }
 }
@@ -362,6 +413,39 @@ void* updateDate(void* arg){
     return nullptr;
 
 }
+
+//uploading the logs to the pc
+void MainWindow::sendLogstoPC(){
+
+
+    if(!sessionsLog.isEmpty()){
+        ui->textBrowser->setText("Printing out Session Logs:\n");
+
+        for(int sessionIndex = 0; sessionIndex < sessionsLog.size(); sessionIndex++){
+
+            //need to add time and date to this
+            //ui->textBrowser->append(QString("%1 took place at %2 \n").arg(sessionsLog[sessionIndex]->getName()).arg(sessionsLog[sessionIndex]->getStartTime()));
+
+            ui->textBrowser->append(QString("%1 Dominant Average Freqeuncies Before Treatment: \n").arg(sessionsLog[sessionIndex]->getName()));
+            QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
+            for(int i = 0; i < beforeAverages.size(); i++){
+                ui->textBrowser->append(QString("%1 ").arg(QString::number(beforeAverages[i])));
+            }
+
+            ui->textBrowser->append(QString("%1 Dominant Average Freqeuncies After Treatment: \n").arg(sessionsLog[sessionIndex]->getName()));
+            QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
+            for(int k = 0; k < endAverages.size(); k++){
+                ui->textBrowser->append(QString("%1 ").arg(QString::number(endAverages[k])));
+            }
+
+        }
+
+    }else{
+        ui->textBrowser->setText("No Sessions have taken place, Session logs is currently empty \n");
+    }
+}
+
+
 
 
 

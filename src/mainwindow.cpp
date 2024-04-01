@@ -67,8 +67,8 @@ MainWindow::MainWindow(QWidget *parent)
         //electrodes.at(20)->setStyleSheet("background-color:  red");
 
         //testing session logs
-        //Session* s1 = new Session("Sesssion 1", 100);
-        //sessionsLog.append(s1);
+        Session* s1 = new Session("Sesssion 1", 100);
+        sessionsLog.append(s1);
 
 }
 MainWindow::~MainWindow()

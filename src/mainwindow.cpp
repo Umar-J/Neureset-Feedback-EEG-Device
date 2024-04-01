@@ -66,9 +66,26 @@ MainWindow::MainWindow(QWidget *parent)
         //electrodes.at(0)->setStyleSheet("background-color:  red");
         //electrodes.at(20)->setStyleSheet("background-color:  red");
 
+        //Creates all 21 EEG objects
+        for(int i = 0; i < 21; i++){
+            EEG* eeg = new EEG(i);
+            eegList.append(eeg);
+        }
+
+        //initilizes currentSession to null
+        currentSession = nullptr;
+
+        connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::startSession);
+        connect(ui->pauseButton, &QPushButton::clicked, this, &MainWindow::pauseSession);
+        connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::stopSession);
+
 }
 MainWindow::~MainWindow()
 {
+    for(int i = 0; i < eegList.size(); i++){
+        delete eegList[i];
+    }
+
     delete ui;
 }
 
@@ -209,6 +226,14 @@ void MainWindow::navigateSubMenu(){
         if (index ==0){
             updateMenu("New Session", {});
             qInfo("New Session Function Goes Here");
+
+            if(currentSession == nullptr){
+                currentSession = startSession();
+            }
+            else{
+                //display currentSession
+            }
+
         }
         else if (index ==1){
             updateMenu("Logs", {});
@@ -364,5 +389,44 @@ void* updateDate(void* arg){
 }
 
 
+Session* MainWindow::startSession(){
+    //If all nodes connected and has atleast 10% battery
+    //Idea Suggestion: Drain battery 10% each session?
+    if(electrodeConnectionCheck() && ui->batteryLevelBar->value() >= 10){
+        Session* session = new Session();
 
+        session->startSession(eegList);
 
+        return session;
+    }
+
+    return nullptr;
+}
+
+void MainWindow::playSession() {
+    if(currentSession == nullptr){
+        return;
+    }
+
+    currentSession->playSession();
+
+}
+
+void MainWindow::pauseSession() {
+    if(currentSession == nullptr){
+        return;
+    }
+
+    currentSession->pauseSession();
+}
+
+void MainWindow::stopSession() {
+    if(currentSession == nullptr){
+        return;
+    }
+
+    currentSession->stopSession();
+
+    qInfo("Add Current Session to sessionsLog Here!");
+
+}

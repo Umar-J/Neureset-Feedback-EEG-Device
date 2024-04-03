@@ -18,6 +18,7 @@ public:
     EEG(int);
 
     int getBaseline();
+    void updateBaseline(int newBaseline);
 
     int getId() const;
 

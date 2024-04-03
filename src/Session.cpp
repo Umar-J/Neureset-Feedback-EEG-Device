@@ -2,14 +2,23 @@
 
 int Session::idCounter = 0;
 
-Session::Session(){
+Session::Session(QVector<EEG*> eegList){
     //id increment
     id = ++idCounter;
 
-    //initialize the timer
-    timer = new QTimer(this);
-
     this->currentSiteIndex = 0;
+
+    sessionName = "Session " + QString::number(id);
+
+    currentTimer = new QTimer(this);
+
+    this->eegList = eegList;
+
+    //Minute * seconds * miliseconds
+    //calculationTime = 1 * 60 * 1000;
+
+    //FOR DEMONSTATION
+    calculationTime = 5000;
 
 }
 
@@ -24,147 +33,161 @@ QTimer* Session:: getTimer() { return timer; }
 QDateTime Session::getStartTime() {return startTime; }
 QDateTime Session::getEndTime() {return endTime; }
 
-QList<int> Session::getStartAverages() {return startAverages;}
-QList<int> Session::getEndAverages() { return endAverages; }
+QVector<int> Session::getStartAverages() {return startAverages;}
+QVector<int> Session::getEndAverages() { return endAverages; }
 
 
-void Session::startSession(QVector<EEG*> eegList){
+void Session::startSession(){
 
-    //Opens timer once contact with electrodes is established
-    timer->start();
+    //Keeps track of time
     startTime = QDateTime::currentDateTime();
 
     //Calculate the overall baseline for all 21 EEG sites concurrently at the start of the session
-    startAverages = calculateBaselineAvg(eegList);
+    currentTimer->stop();
+    currentTimer = new QTimer(this);
+    connect(currentTimer, &QTimer::timeout, this, [=](){
+        startAverages = calculateBaselineAvg();
 
+        // Calculate the baseline frequency for the current EEG site in the span of calculationTime
+        currentTimer->stop();
+        currentTimer = new QTimer(this);
+        connect(currentTimer, &QTimer::timeout, this, [=](){
+            this->calculateBaselineFrequency();
+        });
+        currentTimer->start(calculationTime);
 
-//     // Set the duration for baseline frequency calculation
-//     int baselineFrequencyDuration = 1;
-
-
-//    // Calculate the baseline frequency for the current EEG site in the span of 1 minute
-//    QTimer::singleShot(baselineFrequencyDuration * 60 * 1000, this, [=]() {
-//        this->calculateBaselineFrequency(eegList);
-//    });
-
-
-    //FOR DEMONSTATION calculation will be 5 seconds
-    QTimer::singleShot(5000, this, [=]() {
-        this->calculateBaselineFrequency(eegList);
     });
+    currentTimer->start(calculationTime);
 
 
 }
 
 
 void Session::playSession(){
-    if(!timer->isActive()){
-        // Start or resume session
-        timer->start();
-        startTime = QDateTime::currentDateTime();
-    }
+    // Start or resume session
+    currentTimer->start();
+    startTime = QDateTime::currentDateTime();
 }
 
 void Session::pauseSession(){
-    // check if the session is running
-    if(timer->isActive()){
-        //pause the session
-        timer->stop();
-        endTime = QDateTime::currentDateTime();
-
-        time += getElapsedTime();
-    }
+    //pause the session
+    currentTimer->stop();
+    endTime = QDateTime::currentDateTime();
+    time += getElapsedTime();
 }
 
 void Session::stopSession(){
+    //Stop session
+    currentTimer->stop();
+    endTime = QDateTime::currentDateTime();
+    time += getElapsedTime();
 
-    //Check if session is running
-    if(timer->isActive()){
-        //Stop session
-        timer->stop();
-        endTime = QDateTime::currentDateTime();
-        time += getElapsedTime();
+    // Calculate the overall baseline for all 21 EEG sites concurrently at the end of the session
+    currentTimer->stop();
+    currentTimer = new QTimer(this);
+    connect(currentTimer, &QTimer::timeout, this, [=](){
 
+        endAverages = calculateBaselineAvg();
         //Inform the user about the session completion
         informUser();
+    });
+    currentTimer->start(calculationTime);
+
+}
+
+QVector<int> Session::calculateBaselineAvg() {
+    QVector<int> baselineAvg;
+    for(int i = 0; i < eegList.size(); i++){
+        baselineAvg.append(eegList[i]->getBaseline());
+
+        QString message = QString("EEG %1's baseline average: %2").arg(i).arg(eegList[i]->getBaseline());
+        qInfo() << message;
     }
 
+    currentTimer->stop();
+
+    return baselineAvg;
 }
 
-QList<int> Session::calculateBaselineAvg(QVector<EEG*> eegList) {
 
-}
-
-
-void Session::calculateBaselineFrequency(QVector<EEG*> eegList) {
-
-    EEG* site = eegList[currentSiteIndex];
-
-    //Gets baseline Frequency
-    int baselineFrequency = site->getBaseline();
-
-    qInfo("CALCULATION DONE");
-
-    //When done calculating Start Treatment
-    startTreatment(baselineFrequency);
+void Session::calculateBaselineFrequency() {
 
     //recursively calls calculate 21 times
     if(currentSiteIndex < 20){
 
-        currentSiteIndex++;
+        EEG* site = eegList[currentSiteIndex];
 
-        QTimer::singleShot(5000, this, [=]() {
-            calculateBaselineFrequency(eegList);
-        });
+        //Gets baseline Frequency
+        int baselineFrequency = site->getBaseline();
+
+        qInfo("CALCULATION DONE");
+
+        //When done calculating Start Treatment
+        startTreatment(baselineFrequency, site);
+
     }
     else{
-        // Calculate the overall baseline for all 21 EEG sites concurrently at the end of the session
-        endAverages = calculateBaselineAvg(eegList);
-
         stopSession();
     }
 
 }
 
-void Session::startTreatment(int frequency){
+void Session::startTreatment(int frequency, EEG* site){
     // Start treatment, flash green light
     greenLightOn();
 
+
     // Recalculate the brainwave frequency every 1/16th of a second, 16 times (duration of a second)
-    QTimer::singleShot(63, this, [=]() {
-        recalculateBrainwaveFrequency(frequency, 1);
+    currentTimer->stop();
+    currentTimer = new QTimer(this);
+    connect(currentTimer, &QTimer::timeout, this, [=](){
+        recalculateBrainwaveFrequency(frequency, site, 1);
     });
+    currentTimer->start(63);
 }
 
 
-void Session::recalculateBrainwaveFrequency(int frequency, int numRecalculations) {
+void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations) {
     //add an offset frequency of 5hz to the baseline frequency
     frequency = frequency + 5;
 
-    //Does the recalculation
-    int recalculatedFrequency = frequency;
+    //Updates baseline frequency
+    site->updateBaseline(frequency);
 
     qInfo("RECALCULATION DONE");
 
     //recursively calls recalculate 16 times
     if(numRecalculations < 16){
-        QTimer::singleShot(63, this, [=]() {
-            recalculateBrainwaveFrequency(recalculatedFrequency, numRecalculations + 1);
+        currentTimer->stop();
+        currentTimer = new QTimer(this);
+        connect(currentTimer, &QTimer::timeout, this, [=](){
+            recalculateBrainwaveFrequency(site->getBaseline(), site, numRecalculations + 1);
         });
+        currentTimer->start(63);
     }
 
     if(numRecalculations == 16){
         // flash green light
         greenLightOff();
+
+        //Treatment done, go to next site
+        currentSiteIndex++;
+
+        currentTimer->stop();
+        currentTimer = new QTimer(this);
+        connect(currentTimer, &QTimer::timeout, this, [=](){
+            this->calculateBaselineFrequency();
+        });
+        currentTimer->start(calculationTime);
     }
 }
 
 void Session::greenLightOn(){
-    //MainWindow::treatmentLedHandler()
+    //MainWindow::treatmentLedHandler();
 }
 
 void Session::greenLightOff(){
-    //MainWindow::treatmentLedHandler()
+    //MainWindow::treatmentLedHandler();
 }
 
 void Session::informUser(){
@@ -173,8 +196,11 @@ void Session::informUser(){
 }
 
 int Session::getElapsedTime() {
+    int inSeconds = 1000;
+    int inMinutes = 60000;
+
     qint64 elapsedTimeInMilliseconds = startTime.msecsTo(endTime);
-    int elapsedTimeInMinutes = static_cast<int>(elapsedTimeInMilliseconds / 60000);
-    return elapsedTimeInMinutes;
+    int elapsedTime = static_cast<int>(elapsedTimeInMilliseconds / inSeconds);
+    return elapsedTime;
 }
 

@@ -75,7 +75,7 @@ MainWindow::MainWindow(QWidget *parent)
         //initilizes currentSession to null
         currentSession = nullptr;
 
-        connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::startSession);
+        connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::playSession);
         connect(ui->pauseButton, &QPushButton::clicked, this, &MainWindow::pauseSession);
         connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::stopSession);
 
@@ -472,15 +472,13 @@ void MainWindow::sendLogstoPC(){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-    if(electrodeConnectionCheck() && ui->batteryLevelBar->value() >= 10){
-        Session* session = new Session();
-
-        session->startSession(eegList);
-
-        return session;
+    if(electrodeConnectionCheck() && ui->batteryLevelBar->value() < 10){
+        return nullptr;
     }
 
-    return nullptr;
+    Session* session = new Session(eegList);
+    session->startSession();
+    return session;
 }
 
 void MainWindow::playSession() {

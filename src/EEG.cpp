@@ -14,6 +14,10 @@ int EEG::getBaseline(){
     return baseline;
 }
 
+void EEG::updateBaseline(int newBaseline){
+    this->baseline = newBaseline;
+}
+
 int EEG::getId() const
 {
     return id;

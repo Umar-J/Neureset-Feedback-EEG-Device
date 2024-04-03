@@ -35,7 +35,7 @@ class Session: public QObject {
     Q_OBJECT
 
 public:
-    Session();
+    Session(QVector<EEG*> eegList);
     ~Session();
 
     QString getName();
@@ -49,7 +49,7 @@ public:
     QList<int> getStartAverages();
     QList<int> getEndAverages();
 
-    void startSession(QVector<EEG*> eegList);
+    void startSession();
 
     void playSession();
     void pauseSession();
@@ -59,22 +59,28 @@ private:
     int time;
     int currentSiteIndex;
 
+    int calculationTime;
+
     QTimer* timer;
+    QTimer* currentTimer;
+
     QString sessionName;
+
+    QVector<EEG*> eegList;
 
     QDateTime startTime;
     QDateTime endTime;
 
-    QList<int> startAverages; // Store start averages for each of the 21 EEG sites
-    QList<int> endAverages; // Store end averages for each of the 21 EEG sites
+    QVector<int> startAverages; // Store start averages for each of the 21 EEG sites
+    QVector<int> endAverages; // Store end averages for each of the 21 EEG sites
 
     static int idCounter; // Keeps track of the number of Session objects created
     int id; // Stores the unique id for each Session object
 
-    QList<int> calculateBaselineAvg(QVector<EEG*> eegList);
-    void startTreatment(int frequency);
-    void calculateBaselineFrequency(QVector<EEG*> eegList);
-    void recalculateBrainwaveFrequency(int frequency, int numRecalculations);
+    QVector<int> calculateBaselineAvg();
+    void startTreatment(int frequency, EEG* site);
+    void calculateBaselineFrequency();
+    void recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations);
 
     void greenLightOn();
     void greenLightOff();

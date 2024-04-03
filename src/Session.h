@@ -40,13 +40,14 @@ public:
 
     QString getName();
     QTimer* getTimer();
+    int getId();
 
     int getTime();
     QDateTime getStartTime();
     QDateTime getEndTime();
 
-    QVector<int> getStartAverages();
-    QVector<int> getEndAverages();
+    QList<int> getStartAverages();
+    QList<int> getEndAverages();
 
     void startSession(QVector<EEG*> eegList);
 

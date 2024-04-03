@@ -20,6 +20,7 @@ Session::~Session(){
 //getters
 QString Session::getName() {return sessionName; }
 QTimer* Session:: getTimer() { return timer; }
+int Session::getId() {return id; }
 
 QDateTime Session::getStartTime() {return startTime; }
 QDateTime Session::getEndTime() {return endTime; }

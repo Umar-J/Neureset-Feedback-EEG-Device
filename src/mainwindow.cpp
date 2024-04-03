@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <iostream>
 #include <QTextStream>
+#include "Session.h"
 //forward reference
 void* updateTime(void*);
 void* updateDate(void*);
@@ -241,19 +242,11 @@ void MainWindow::navigateSubMenu(){
             if(!sessionsLog.isEmpty()){
 
                 QStringList sessionList;
-
                 const int numSessions = sessionsLog.size();
 
-                for (int i = 0; i < numSessions; ++i) {
-                    //need to add time and date to this preview:
-                    sessionList.append(QString("%1 ").arg(sessionsLog.at(i)->getName()));
-                }
+                sessionList = deviceLogsPreview(sessionList, numSessions);
+                updateMenu("Preview Logs", sessionList);
 
-                activeQListWidget->clear();
-                ui->menuLabel->setText("Preview Logs");
-                activeQListWidget->addItems(sessionList);
-                activeQListWidget->setCurrentRow(0);
-                ui->menuLabel->setText("Preview Logs");
 
             }else{
                 qInfo("Session logs is empty");
@@ -445,25 +438,47 @@ void MainWindow::sendLogstoPC(){
         for(int sessionIndex = 0; sessionIndex < sessionsLog.size(); sessionIndex++){
 
             //need to add time and date to this
-            //ui->textBrowser->append(QString("%1 took place at %2 \n").arg(sessionsLog[sessionIndex]->getName()).arg(sessionsLog[sessionIndex]->getStartTime()));
+            QString sessionID = QString("Session %1 ").arg(sessionsLog.at(sessionIndex)->getId());
+            QDateTime currentDateTime = sessionsLog.at(sessionIndex)->getStartTime();
+            QString dateTimeString = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+            ui->textBrowser->append(QString("\n%1 took place at %2 ").arg(sessionID).arg(dateTimeString));
 
-            ui->textBrowser->append(QString("%1 Dominant Average Freqeuncies Before Treatment: \n").arg(sessionsLog[sessionIndex]->getName()));
-            QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
-            for(int i = 0; i < beforeAverages.size(); i++){
-                ui->textBrowser->append(QString("%1 ").arg(QString::number(beforeAverages[i])));
+            ui->textBrowser->append(QString("Dominant Average Freqeuncies Before Treatment:"));
+            QList<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
+            QString outputString;
+            for(int i = 0; i < beforeAverages.size(); i++) {
+                outputString += QString::number(beforeAverages[i]) + " ";
             }
+            ui->textBrowser->append(outputString);
 
-            ui->textBrowser->append(QString("%1 Dominant Average Freqeuncies After Treatment: \n").arg(sessionsLog[sessionIndex]->getName()));
-            QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
-            for(int k = 0; k < endAverages.size(); k++){
-                ui->textBrowser->append(QString("%1 ").arg(QString::number(endAverages[k])));
+            ui->textBrowser->append(QString("Dominant Average Freqeuncies After Treatment:"));
+            QList<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
+            QString outputString2;
+            for(int i = 0; i < endAverages.size(); i++) {
+                outputString2 += QString::number(endAverages[i]) + " ";
             }
+            ui->textBrowser->append(outputString2);
 
         }
 
     }else{
         ui->textBrowser->setText("No Sessions have taken place, Session logs is currently empty \n");
     }
+}
+
+// display a preview of the log information on the device
+QStringList MainWindow::deviceLogsPreview(QStringList sessionList, int numSessions ){
+
+    for (int i = 0; i < numSessions; i++) {
+        //might need to adjust based on variable changes made in Session.h
+        QString sessionID = QString("Session %1 ").arg(sessionsLog.at(i)->getId());
+
+        QDateTime currentDateTime = sessionsLog.at(i)->getStartTime();
+        QString dateTimeString = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+
+         sessionList.append(sessionID + dateTimeString);
+    }
+    return sessionList;
 }
 
 

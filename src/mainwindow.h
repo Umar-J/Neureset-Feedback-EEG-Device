@@ -68,6 +68,7 @@ private:
     void navigateToMainMenu();
     void goBack();
     void sendLogstoPC();
+    QStringList deviceLogsPreview(QStringList sessionList, int numSessions);
 
     Session* currentSession;
     Session* startSession();

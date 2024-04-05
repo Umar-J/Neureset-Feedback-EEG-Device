@@ -115,9 +115,9 @@ void MainWindow::initializeMainMenu(Menu * m){
     timeDate->addChildMenu(viewHistory);
     timeDate->addChildMenu(clearHistory);
 
-    //initialize the timer for the device
+    //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(60000); // every minute
+    timer->setInterval(600); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -284,6 +284,9 @@ void MainWindow::navigateSubMenu(){
 
 void MainWindow::powerButtonHandler(){
     //can use this function for 0 battery aswell
+    if (ui->batteryLevelBar->value() <=0){
+        return;
+    }
     powerStatus = !powerStatus;
     changePowerStatus();
     setVisibility(powerStatus); //timeDate and battery widgets
@@ -487,10 +490,11 @@ QStringList MainWindow::deviceLogsPreview(QStringList sessionList, int numSessio
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-    if(electrodeConnectionCheck() && ui->batteryLevelBar->value() < 10){
+    if(!(electrodeConnectionCheck() && ui->batteryLevelBar->value() < 10)){
+        qInfo("Not gonna do treatment");
         return nullptr;
     }
-
+    qInfo("yess gonna do treatment");
     Session* session = new Session(eegList);
     session->startSession();
     return session;

@@ -623,7 +623,7 @@ QPushButton:pressed {
      </property>
      <property name="styleSheet">
       <string notr="true">QProgressBar::chunk {
-     background-color: rgb(65, 158, 48);
+     background-color: rgb(78, 154, 6);;
 	border-radius: 5px, 10px, 5px, 10px;
  }
 
@@ -636,7 +636,7 @@ QProgressBar {
       <number>0</number>
      </property>
      <property name="value">
-      <number>100</number>
+      <number>5</number>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -649,6 +649,9 @@ QProgressBar {
      </property>
      <property name="invertedAppearance">
       <bool>false</bool>
+     </property>
+     <property name="textDirection">
+      <enum>QProgressBar::TopToBottom</enum>
      </property>
      <property name="format">
       <string>%p%</string>

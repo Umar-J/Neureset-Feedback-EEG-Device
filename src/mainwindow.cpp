@@ -272,6 +272,8 @@ void MainWindow::navigateSubMenu(){
             qInfo("New Session Function Goes Here");
 
             if(currentSession == nullptr){
+             //   currentSession->initBools(isConnected);
+
                 currentSession = startSession();
             }
             else{
@@ -501,7 +503,7 @@ void MainWindow::enableTreatmentButtons(bool status){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-    if(!(electrodeConnectionCheck()) && ui->batteryLevelBar->value() < 10){
+    if(!(electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
@@ -547,6 +549,7 @@ qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
     sessionsLog.append(currentSession);
+    currentSession  = nullptr;
 
 
 }

@@ -55,6 +55,8 @@ public:
     void pauseSession();
     void stopSession();
 
+    void initBools(bool eegs[]);
+
 private:
     int time;
     int currentSiteIndex;
@@ -67,6 +69,7 @@ private:
     QString sessionName;
 
     QVector<EEG*> eegList;
+    bool eegConnections[21];
 
     QDateTime startTime;
     QDateTime endTime;
@@ -85,6 +88,7 @@ private:
     void greenLightOn();
     void greenLightOff();
     void informUser();
+
 
     int getElapsedTime();
 

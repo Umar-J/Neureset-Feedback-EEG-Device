@@ -196,6 +196,14 @@ void Session::informUser(){
     qInfo() << message;
 }
 
+void Session::initBools(bool eegs[])
+{
+    for (int i =0; i< 21;i++){
+        eegConnections[i] = eegs[i];
+        qInfo("EEg at %d is %d",i,eegs[i]);
+    }
+}
+
 int Session::getElapsedTime() {
     int inSeconds = 1000;
     int inMinutes = 60000;

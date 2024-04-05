@@ -46,8 +46,8 @@ public:
     QDateTime getStartTime();
     QDateTime getEndTime();
 
-    QList<int> getStartAverages();
-    QList<int> getEndAverages();
+    QVector<int> getStartAverages();
+    QVector<int> getEndAverages();
 
     void startSession();
 

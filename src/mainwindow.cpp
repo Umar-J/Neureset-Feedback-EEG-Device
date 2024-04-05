@@ -444,7 +444,7 @@ void MainWindow::sendLogstoPC(){
             ui->textBrowser->append(QString("\n%1 took place at %2 ").arg(sessionID).arg(dateTimeString));
 
             ui->textBrowser->append(QString("Dominant Average Freqeuncies Before Treatment:"));
-            QList<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
+            QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
             QString outputString;
             for(int i = 0; i < beforeAverages.size(); i++) {
                 outputString += QString::number(beforeAverages[i]) + " ";
@@ -452,7 +452,7 @@ void MainWindow::sendLogstoPC(){
             ui->textBrowser->append(outputString);
 
             ui->textBrowser->append(QString("Dominant Average Freqeuncies After Treatment:"));
-            QList<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
+            QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
             QString outputString2;
             for(int i = 0; i < endAverages.size(); i++) {
                 outputString2 += QString::number(endAverages[i]) + " ";

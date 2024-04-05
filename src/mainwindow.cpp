@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
         //initialize the current time and date
         currentTime = QTime::currentTime();
         currentDate = QDate::currentDate();
-
+        sessionInProgress = false;
 
         //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
         fill_n(isConnected, 21, false);
@@ -117,7 +117,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(60); // every minute should be 60000
+    timer->setInterval(60000); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -336,12 +336,19 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 
 void MainWindow::navigateToMainMenu(){
     //check for ongoing therapy
+    if(sessionInProgress){
+        qInfo("Stoppping current session");
+        currentSession->stopSession();
+    }
+
     while (masterMenu->getName() != "MAIN MENU") {
         masterMenu = masterMenu->getParent();
     }
 
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
     //Time and Date Widgets (use for updating time and date)
+    //disable play pause and stop buttons
+    enableTreatmentButtons(false);
     ui->timeEdit->setVisible(false);
     ui->dateEdit->setVisible(false);
 }
@@ -484,17 +491,24 @@ QStringList MainWindow::deviceLogsPreview(QStringList sessionList, int numSessio
     return sessionList;
 }
 
-
+void MainWindow::enableTreatmentButtons(bool status){
+    ui->pauseButton->setEnabled(status);
+    ui->playButton->setEnabled(status);
+    ui->stopButton->setEnabled(status);
+}
 
 
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-    if(!(electrodeConnectionCheck() && ui->batteryLevelBar->value() < 10)){
+    if(!(electrodeConnectionCheck()) && ui->batteryLevelBar->value() < 10){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
     qInfo("yess gonna do treatment");
+    sessionInProgress = true;
+    //enable the 3 buttons
+    enableTreatmentButtons(true);
     Session* session = new Session(eegList);
     session->startSession();
     return session;
@@ -504,7 +518,8 @@ void MainWindow::playSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    qInfo("resuming session");
+    sessionInProgress = true;
     currentSession->playSession();
 
 }
@@ -514,6 +529,7 @@ void MainWindow::pauseSession() {
         return;
     }
     qInfo("pausing Session");
+    sessionInProgress = false;
     currentSession->pauseSession();
 }
 
@@ -521,9 +537,16 @@ void MainWindow::stopSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    if (sessionInProgress == false){
+        return;
+    }
+sessionInProgress = false;
     currentSession->stopSession();
+
 qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
+    navigateToMainMenu();
+    sessionsLog.append(currentSession);
+
 
 }

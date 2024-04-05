@@ -644,19 +644,6 @@ QProgressBar[textVisible=&quot;false&quot;] {
 QProgressBar::chunk[warning=&quot;true&quot;] {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #d9534f, stop: 1 #c9302c); /* Red gradient for low battery */
 }
-
-/* Optional: Animation for charging */
-QProgressBar[charging=&quot;true&quot;]::chunk {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5bc0de, stop: 0.5 #46b8da, stop: 1 #5bc0de);
-    background-repeat: no-repeat;
-    background-position: center top;
-    animation: chargingAnimation 2s infinite linear;
-}
-
-@keyframes chargingAnimation {
-    0% { background-size: 100% 0%; }
-    100% { background-size: 100% 100%; }
-}
 </string>
      </property>
      <property name="minimum">
@@ -1676,6 +1663,19 @@ QPushButton:pressed {
     </property>
     <property name="flat">
      <bool>false</bool>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>470</y>
+      <width>171</width>
+      <height>17</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Frequency Generator:</string>
     </property>
    </widget>
   </widget>

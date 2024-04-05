@@ -48,6 +48,7 @@ private:
     void contactLedHandler();
     void treatmentLedHandler();
     void lostLedHandler();
+    bool sessionInProgress;
 
     void setTime();
     void setDate();
@@ -55,6 +56,7 @@ private:
     void setVisibility(bool powerStatus);
 
     bool electrodeConnectionCheck();
+    void enableTreatmentButtons(bool);
 
 
 // *** TODO: Implement these before un-commenting

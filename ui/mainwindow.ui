@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>958</width>
+    <width>1522</width>
     <height>803</height>
    </rect>
   </property>
@@ -20,10 +20,10 @@
    <widget class="QWidget" name="denasWidget" native="true">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>311</width>
-      <height>331</height>
+      <x>10</x>
+      <y>40</y>
+      <width>411</width>
+      <height>371</height>
      </rect>
     </property>
     <property name="sizePolicy">
@@ -41,110 +41,24 @@
     <property name="styleSheet">
      <string notr="true">background-color: rgb(192, 191, 188);</string>
     </property>
-    <widget class="QListWidget" name="mainMenuListView">
-     <property name="geometry">
-      <rect>
-       <x>24</x>
-       <y>102</y>
-       <width>138</width>
-       <height>102</height>
-      </rect>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">border-bottom-right-radius: 12px;
-border-bottom-left-radius: 12px;
-background-color: rgb(243, 243, 243);
-color: rgb(0, 0, 0);
-selection-background-color: rgb(122, 0, 0)</string>
-     </property>
-     <property name="verticalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="horizontalScrollBarPolicy">
-      <enum>Qt::ScrollBarAlwaysOff</enum>
-     </property>
-     <property name="uniformItemSizes">
-      <bool>false</bool>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
-     </property>
-     <property name="selectionRectVisible">
-      <bool>false</bool>
-     </property>
-     <property name="currentRow">
-      <number>-1</number>
-     </property>
-    </widget>
-    <widget class="QLabel" name="menuLabel">
-     <property name="geometry">
-      <rect>
-       <x>24</x>
-       <y>90</y>
-       <width>138</width>
-       <height>12</height>
-      </rect>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>8</pointsize>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
-     <property name="layoutDirection">
-      <enum>Qt::LeftToRight</enum>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(52, 101, 164);
-color: rgb(255, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string>MAIN MENU</string>
-     </property>
-     <property name="scaledContents">
-      <bool>false</bool>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignCenter</set>
-     </property>
-    </widget>
     <widget class="QWidget" name="programViewWidget" native="true">
      <property name="geometry">
       <rect>
        <x>24</x>
-       <y>102</y>
-       <width>138</width>
-       <height>102</height>
+       <y>112</y>
+       <width>221</width>
+       <height>131</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">background-color: rgb(52, 101, 164);
 color: rgb(255, 255, 255);</string>
      </property>
-     <widget class="QGraphicsView" name="treatmentView">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>138</width>
-        <height>90</height>
-       </rect>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>10</pointsize>
-       </font>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(243, 243, 243);</string>
-      </property>
-     </widget>
      <widget class="QLabel" name="powerLevelLabel">
       <property name="geometry">
        <rect>
         <x>0</x>
-        <y>90</y>
+        <y>130</y>
         <width>83</width>
         <height>12</height>
        </rect>
@@ -171,8 +85,8 @@ color: rgb(255, 255, 255);</string>
       </property>
       <property name="geometry">
        <rect>
-        <x>83</x>
-        <y>90</y>
+        <x>80</x>
+        <y>130</y>
         <width>55</width>
         <height>12</height>
        </rect>
@@ -199,14 +113,67 @@ color: rgb(255, 255, 255);</string>
        <number>6</number>
       </property>
      </widget>
+     <widget class="QGraphicsView" name="treatmentView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>221</width>
+        <height>121</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: rgb(243, 243, 243);</string>
+      </property>
+     </widget>
+     <widget class="QListWidget" name="mainMenuListView">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>10</y>
+        <width>221</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">border-bottom-right-radius: 12px;
+border-bottom-left-radius: 12px;
+background-color: rgb(243, 243, 243);
+color: rgb(0, 0, 0);
+selection-background-color: rgb(122, 0, 0)</string>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="uniformItemSizes">
+       <bool>false</bool>
+      </property>
+      <property name="wordWrap">
+       <bool>true</bool>
+      </property>
+      <property name="selectionRectVisible">
+       <bool>false</bool>
+      </property>
+      <property name="currentRow">
+       <number>-1</number>
+      </property>
+     </widget>
     </widget>
     <widget class="QFrame" name="statusBarQFrame">
      <property name="geometry">
       <rect>
        <x>24</x>
-       <y>78</y>
-       <width>138</width>
-       <height>12</height>
+       <y>63</y>
+       <width>221</width>
+       <height>31</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -240,14 +207,30 @@ color: rgb(255, 255, 255);</string>
        <bool>true</bool>
       </property>
      </widget>
+     <widget class="QDateTimeEdit" name="dateTimeEdit">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>0</y>
+        <width>141</width>
+        <height>26</height>
+       </rect>
+      </property>
+      <property name="readOnly">
+       <bool>true</bool>
+      </property>
+     </widget>
     </widget>
     <widget class="QGraphicsView" name="powerOffView">
      <property name="geometry">
       <rect>
        <x>24</x>
-       <y>78</y>
-       <width>138</width>
-       <height>126</height>
+       <y>68</y>
+       <width>221</width>
+       <height>171</height>
       </rect>
      </property>
      <property name="styleSheet">
@@ -257,7 +240,7 @@ color: rgb(255, 255, 255);</string>
     <widget class="QPushButton" name="upButton">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>250</x>
        <y>80</y>
        <width>40</width>
        <height>40</height>
@@ -308,7 +291,7 @@ QPushButton:pressed {
     <widget class="QPushButton" name="downButton">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>250</x>
        <y>180</y>
        <width>40</width>
        <height>40</height>
@@ -368,7 +351,7 @@ QPushButton:pressed {
      </property>
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>250</x>
        <y>130</y>
        <width>40</width>
        <height>40</height>
@@ -411,7 +394,7 @@ QPushButton:pressed {
      <property name="geometry">
       <rect>
        <x>30</x>
-       <y>220</y>
+       <y>260</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -465,7 +448,7 @@ QPushButton:pressed {
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>220</y>
+       <y>260</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -515,7 +498,7 @@ QPushButton:pressed {
     <widget class="QPushButton" name="powerButton">
      <property name="geometry">
       <rect>
-       <x>260</x>
+       <x>360</x>
        <y>10</y>
        <width>40</width>
        <height>40</height>
@@ -557,8 +540,8 @@ QPushButton:pressed {
     <widget class="QPushButton" name="menuButton">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>30</y>
+       <x>60</x>
+       <y>20</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -602,8 +585,8 @@ QPushButton:pressed {
      </property>
      <property name="geometry">
       <rect>
-       <x>230</x>
-       <y>290</y>
+       <x>320</x>
+       <y>320</y>
        <width>71</width>
        <height>31</height>
       </rect>
@@ -672,7 +655,7 @@ QProgressBar::chunk[warning=&quot;true&quot;] {
      <property name="geometry">
       <rect>
        <x>130</x>
-       <y>220</y>
+       <y>260</y>
        <width>40</width>
        <height>40</height>
       </rect>
@@ -761,8 +744,8 @@ QPushButton:pressed {
     <widget class="QTimeEdit" name="timeEdit">
      <property name="geometry">
       <rect>
-       <x>220</x>
-       <y>120</y>
+       <x>310</x>
+       <y>110</y>
        <width>91</width>
        <height>16</height>
       </rect>
@@ -774,32 +757,48 @@ QPushButton:pressed {
     <widget class="QDateEdit" name="dateEdit">
      <property name="geometry">
       <rect>
-       <x>220</x>
+       <x>310</x>
        <y>140</y>
        <width>91</width>
        <height>16</height>
       </rect>
      </property>
     </widget>
-    <widget class="QDateTimeEdit" name="dateTimeEdit">
-     <property name="enabled">
-      <bool>true</bool>
-     </property>
+    <widget class="QLabel" name="menuLabel">
      <property name="geometry">
       <rect>
-       <x>20</x>
-       <y>270</y>
-       <width>141</width>
-       <height>26</height>
+       <x>25</x>
+       <y>92</y>
+       <width>220</width>
+       <height>20</height>
       </rect>
      </property>
-     <property name="readOnly">
-      <bool>true</bool>
+     <property name="font">
+      <font>
+       <pointsize>8</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(52, 101, 164);
+color: rgb(255, 255, 255);</string>
+     </property>
+     <property name="text">
+      <string>MAIN MENU</string>
+     </property>
+     <property name="scaledContents">
+      <bool>false</bool>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
      </property>
     </widget>
     <zorder>powerOffView</zorder>
     <zorder>statusBarQFrame</zorder>
-    <zorder>menuLabel</zorder>
     <zorder>programViewWidget</zorder>
     <zorder>upButton</zorder>
     <zorder>downButton</zorder>
@@ -810,19 +809,18 @@ QPushButton:pressed {
     <zorder>menuButton</zorder>
     <zorder>batteryLevelBar</zorder>
     <zorder>stopButton</zorder>
-    <zorder>mainMenuListView</zorder>
     <zorder>contactLed</zorder>
     <zorder>treatmentLed</zorder>
     <zorder>lostLed</zorder>
     <zorder>timeEdit</zorder>
     <zorder>dateEdit</zorder>
-    <zorder>dateTimeEdit</zorder>
+    <zorder>menuLabel</zorder>
    </widget>
    <widget class="QPushButton" name="electrode_0">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>110</y>
+      <x>960</x>
+      <y>40</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -859,8 +857,8 @@ QPushButton:pressed {
    <widget class="QTextBrowser" name="textBrowser">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>110</y>
+      <x>510</x>
+      <y>40</y>
       <width>351</width>
       <height>331</height>
      </rect>
@@ -869,8 +867,8 @@ QPushButton:pressed {
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>370</x>
-      <y>80</y>
+      <x>520</x>
+      <y>10</y>
       <width>62</width>
       <height>17</height>
      </rect>
@@ -882,8 +880,8 @@ QPushButton:pressed {
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>80</y>
+      <x>960</x>
+      <y>10</y>
       <width>62</width>
       <height>17</height>
      </rect>
@@ -896,7 +894,7 @@ QPushButton:pressed {
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>80</y>
+      <y>10</y>
       <width>62</width>
       <height>17</height>
      </rect>
@@ -908,8 +906,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_1">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>150</y>
+      <x>960</x>
+      <y>80</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -946,8 +944,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_2">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>190</y>
+      <x>960</x>
+      <y>120</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -984,8 +982,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_3">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>230</y>
+      <x>960</x>
+      <y>160</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1022,8 +1020,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_4">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>270</y>
+      <x>960</x>
+      <y>200</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1060,8 +1058,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_5">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>310</y>
+      <x>960</x>
+      <y>240</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1098,8 +1096,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_6">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>350</y>
+      <x>960</x>
+      <y>280</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1136,8 +1134,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_7">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>390</y>
+      <x>960</x>
+      <y>320</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1174,8 +1172,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_8">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>430</y>
+      <x>960</x>
+      <y>360</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1212,8 +1210,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_9">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>470</y>
+      <x>960</x>
+      <y>400</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1250,8 +1248,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_10">
     <property name="geometry">
      <rect>
-      <x>790</x>
-      <y>510</y>
+      <x>960</x>
+      <y>440</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1288,8 +1286,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_11">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>110</y>
+      <x>1010</x>
+      <y>40</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1326,8 +1324,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_12">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>150</y>
+      <x>1010</x>
+      <y>80</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1364,8 +1362,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_13">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>190</y>
+      <x>1010</x>
+      <y>120</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1402,8 +1400,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_14">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>230</y>
+      <x>1010</x>
+      <y>160</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1440,8 +1438,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_15">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>270</y>
+      <x>1010</x>
+      <y>200</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1478,8 +1476,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_16">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>310</y>
+      <x>1010</x>
+      <y>240</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1516,8 +1514,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_17">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>350</y>
+      <x>1010</x>
+      <y>280</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1554,8 +1552,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_18">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>390</y>
+      <x>1010</x>
+      <y>320</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1592,8 +1590,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_19">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>430</y>
+      <x>1010</x>
+      <y>360</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1630,8 +1628,8 @@ QPushButton:pressed {
    <widget class="QPushButton" name="electrode_20">
     <property name="geometry">
      <rect>
-      <x>840</x>
-      <y>470</y>
+      <x>1010</x>
+      <y>400</y>
       <width>41</width>
       <height>31</height>
      </rect>
@@ -1684,7 +1682,7 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>958</width>
+     <width>1522</width>
      <height>22</height>
     </rect>
    </property>

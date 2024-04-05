@@ -117,7 +117,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(600); // every minute should be 60000
+    timer->setInterval(60); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -310,13 +310,13 @@ void MainWindow::applyElectrode(int i){
     isConnected[i] = !isConnected[i]; // flip on click
     if (isConnected[i]){
         electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
-        qInfo("eeg at %d is connected", i);
-        qInfo("%d", isConnected[i]);
-        electrodeConnectionCheck();
+       // qInfo("eeg at %d is connected", i);
+      //  qInfo("%d", isConnected[i]);
+     //   electrodeConnectionCheck();
     }else{
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
-        qInfo("eeg at %d is disconected", i);
-        qInfo("%d", isConnected[i]);
+     //   qInfo("eeg at %d is disconected", i);
+      //  qInfo("%d", isConnected[i]);
 
     }
 
@@ -513,7 +513,7 @@ void MainWindow::pauseSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    qInfo("pausing Session");
     currentSession->pauseSession();
 }
 
@@ -523,7 +523,7 @@ void MainWindow::stopSession() {
     }
 
     currentSession->stopSession();
-
+qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
 
 }

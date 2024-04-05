@@ -622,21 +622,48 @@ QPushButton:pressed {
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-      <string notr="true">QProgressBar::chunk {
-     background-color: rgb(65, 158, 48);
-	border-radius: 5px, 10px, 5px, 10px;
- }
+      <string notr="true">QProgressBar {
+    border: 2px solid #333; /* Dark border for definition */
+    border-radius: 8px; /* Rounded corners */
+    background-color: #fff; /* Light background */
+    text-align: center; /* Keep text centered */
+    color: #333; /* Text color */
+}
 
-QProgressBar {
-	text-align: center;
-	border-radius: 5px;
-}</string>
+QProgressBar::chunk {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #5cb85c, stop: 1 #4cae4c); /* Green gradient for charge */
+    border-radius: 6px; /* Slightly smaller radius than the bar for nice padding */
+    margin: 2px; /* Small space to mimic battery segment gaps */
+}
+
+QProgressBar[textVisible=&quot;false&quot;] {
+    text-indent: -999px; /* Hide text without affecting alignment */
+}
+
+/* Style for low battery (&lt;20%) */
+QProgressBar::chunk[warning=&quot;true&quot;] {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #d9534f, stop: 1 #c9302c); /* Red gradient for low battery */
+}
+
+/* Optional: Animation for charging */
+QProgressBar[charging=&quot;true&quot;]::chunk {
+    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #5bc0de, stop: 0.5 #46b8da, stop: 1 #5bc0de);
+    background-repeat: no-repeat;
+    background-position: center top;
+    animation: chargingAnimation 2s infinite linear;
+}
+
+@keyframes chargingAnimation {
+    0% { background-size: 100% 0%; }
+    100% { background-size: 100% 100%; }
+}
+</string>
      </property>
      <property name="minimum">
       <number>0</number>
      </property>
      <property name="value">
-      <number>22</number>
+      <number>100</number>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

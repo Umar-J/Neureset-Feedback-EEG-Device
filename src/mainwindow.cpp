@@ -523,6 +523,8 @@ Session* MainWindow::startSession(){
     enableTreatmentButtons(true);
     Session* session = new Session(eegList);
     session->initBools(isConnected); //
+    connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
+
     session->startSession();
     return session;
 }

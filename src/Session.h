@@ -57,6 +57,7 @@ public:
     void stopSession();
 
     void initBools(bool eegs[]);
+    void greenLightOn();
 
 private:
     int time;
@@ -88,12 +89,14 @@ private:
     void calculateBaselineFrequency();
     void recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations);
 
-    void greenLightOn();
+
     void greenLightOff();
     void informUser();
 
 
     int getElapsedTime();
+signals:
+    void turnOnGreen();
 
 };
 

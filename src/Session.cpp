@@ -195,6 +195,7 @@ void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRec
 
 void Session::greenLightOn(){
     //MainWindow::treatmentLedHandler();
+    emit turnOnGreen();
 }
 
 void Session::greenLightOff(){
@@ -239,4 +240,6 @@ int Session::getElapsedTime() {
     int elapsedTime = static_cast<int>(elapsedTimeInMilliseconds / inSeconds);
     return elapsedTime;
 }
+
+
 

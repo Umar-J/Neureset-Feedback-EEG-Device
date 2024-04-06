@@ -537,8 +537,7 @@ void MainWindow::enableTreatmentButtons(bool status){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-
-    if((!electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
+    if((!electrodeConnectionCheck() || ui->batteryLevelBar->value() < 10)){
         qInfo("Not gonna do treatment");
         return nullptr;
     }

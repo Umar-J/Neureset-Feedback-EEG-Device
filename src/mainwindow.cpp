@@ -47,8 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
         pthread_t dateThread;
         pthread_create(&dateThread, nullptr, updateDate, &currentDate);
 
-        //visibility of main time and date widget and battery
-        setVisibility(powerStatus);
 
         //Time and Date Widgets (use for updating time and date)
         ui->timeEdit->setVisible(false);
@@ -139,6 +137,8 @@ void MainWindow::changePowerStatus(){
         ui->pauseButton->setEnabled(powerStatus);
         ui->playButton->setEnabled(powerStatus);
         ui->stopButton->setEnabled(powerStatus);
+        ui->dateTimeEdit->setVisible(powerStatus);
+        ui->batteryLevelBar->setVisible(powerStatus);
         if (powerStatus){
             navigateToMainMenu();
             //disconnect nodes
@@ -289,7 +289,6 @@ void MainWindow::powerButtonHandler(){
     }
     powerStatus = !powerStatus;
     changePowerStatus();
-    setVisibility(powerStatus); //timeDate and battery widgets
     //check if power is on
     if (powerStatus){
         //start the timer
@@ -359,7 +358,9 @@ void MainWindow::drainBattery(){
     if (powerStatus){
         //Check for low battery
         if (ui->batteryLevelBar->value() < 20 && !lowBatteryMessage){
-            qInfo("Low Battery");
+            //qInfo("Low Battery");
+            BatteryLowMessage batteryLow;
+            batteryLow.exec();
             lowBatteryMessage = true; // display the message only once
         }
         //check if battery level is not 0
@@ -371,21 +372,24 @@ void MainWindow::drainBattery(){
             qInfo("Power Off");
             powerStatus = false;
             changePowerStatus();
+            ui->timeEdit->setVisible(false);
+            ui->dateEdit->setVisible(false);
             timer->stop();
         }
     }
-}
+    QString highBatteryHealth = "QProgressBar { selection-background-color: rgb(78, 154, 6); }";
+    QString mediumBatteryHealth = "QProgressBar { selection-background-color: rgb(196, 160, 0);}";
+    QString lowBatteryHealth = "QProgressBar { selection-background-color: rgb(164, 0, 0); }";
 
-void MainWindow::setVisibility(bool powerStatus){
-    //check if power is on to make it visible
-    if (powerStatus){
-        ui->dateTimeEdit->setVisible(true);
-        ui->batteryLevelBar->setVisible(true);
-    }else{
-        ui->dateTimeEdit->setVisible(false);
-        ui->batteryLevelBar->setVisible(false);
+    if (ui->batteryLevelBar->value() >= 50) {
+        ui->batteryLevelBar->setStyleSheet(highBatteryHealth);
     }
-
+    else if (ui->batteryLevelBar->value() >= 20) {
+        ui->batteryLevelBar->setStyleSheet(mediumBatteryHealth);
+    }
+    else {
+        ui->batteryLevelBar->setStyleSheet(lowBatteryHealth);
+    }
 }
 
 void MainWindow::displayCurrentDateAndTime(){

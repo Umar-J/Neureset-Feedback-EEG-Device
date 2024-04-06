@@ -149,13 +149,25 @@ void MainWindow::changePowerStatus(){
 
 }
 
-void MainWindow::contactLedHandler(){
-    ui->contactLed->setStyleSheet("background-color:  blue");
+void MainWindow::contactLedHandler(bool isOn){
+    if (isOn){
+        ui->contactLed->setStyleSheet("background-color:  blue");
+
+    }else{
+        ui->contactLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
 
-void MainWindow::treatmentLedHandler(){
-    ui->treatmentLed->setStyleSheet("background-color:  green");
+void MainWindow::treatmentLedHandler(bool isOn){
+    if (isOn){
+        ui->treatmentLed->setStyleSheet("background-color:  green");
+
+    }else{
+        ui->treatmentLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
 void MainWindow::lostLedHandler(){
@@ -169,10 +181,13 @@ bool MainWindow::electrodeConnectionCheck(){
     for (int i = 0; i < 21; ++i) {
         if (isConnected[i]==false){
             qInfo("all nodes not connected");
+            contactLedHandler(false);
             return false;
         }
     }
     qInfo("all nodes connected!!!!!!!!");
+    //make blue
+    contactLedHandler(true);
     return true;
 }
 
@@ -325,6 +340,7 @@ void MainWindow::applyElectrode(int i){
       //  qInfo("%d", isConnected[i]);
 
     }
+    electrodeConnectionCheck();
 
 }
 
@@ -513,7 +529,7 @@ Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
 
-    if(!(electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
+    if((!electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
@@ -522,7 +538,7 @@ Session* MainWindow::startSession(){
     //enable the 3 buttons
     enableTreatmentButtons(true);
     Session* session = new Session(eegList);
-    session->initBools(isConnected); //
+    session->initBools(isConnected);
     connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
 
     session->startSession();

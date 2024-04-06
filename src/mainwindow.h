@@ -47,8 +47,8 @@ private:
     bool powerStatus;
     bool lowBatteryMessage = false;
     void changePowerStatus();
-    void contactLedHandler();
-    void treatmentLedHandler();
+    void contactLedHandler(bool);
+    void treatmentLedHandler(bool);
     void lostLedHandler();
     bool sessionInProgress;
 
@@ -56,6 +56,7 @@ private:
     void setDate();
     void displayCurrentDateAndTime();
     void setVisibility(bool powerStatus);
+    void updateContactLed();
 
     bool electrodeConnectionCheck();
     void enableTreatmentButtons(bool);

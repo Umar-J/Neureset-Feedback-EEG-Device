@@ -96,7 +96,8 @@ private:
 
     int getElapsedTime();
 signals:
-    void turnOnGreen();
+    void turnOnGreen(bool);
+
 
 };
 

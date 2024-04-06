@@ -195,11 +195,12 @@ void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRec
 
 void Session::greenLightOn(){
     //MainWindow::treatmentLedHandler();
-    emit turnOnGreen();
+    emit turnOnGreen(true);
 }
 
 void Session::greenLightOff(){
     //MainWindow::treatmentLedHandler();
+    emit turnOnGreen(false);
 }
 
 void Session::informUser(){
@@ -225,6 +226,7 @@ bool Session::checkIfConnectionLost(){
             stopSession();
             //call mainwindow stop session
             qInfo("eeg %d is disconnected-------------------------------",i);
+            //make it red
             return true;
         }
 

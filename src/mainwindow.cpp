@@ -47,8 +47,6 @@ MainWindow::MainWindow(QWidget *parent)
         pthread_t dateThread;
         pthread_create(&dateThread, nullptr, updateDate, &currentDate);
 
-        //visibility of main time and date widget and battery
-        //setVisibility(powerStatus);
 
         //Time and Date Widgets (use for updating time and date)
         ui->timeEdit->setVisible(false);
@@ -117,7 +115,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the device
     timer = new QTimer(this);
-    timer->setInterval(600); // every minute
+    timer->setInterval(60000); // every minute
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -288,13 +286,12 @@ void MainWindow::powerButtonHandler(){
     //can use this function for 0 battery aswell
     powerStatus = !powerStatus;
     changePowerStatus();
-    setVisibility(powerStatus); //timeDate and battery widgets
     //check if power is on
     if (powerStatus){
         //start the timer
         connect(timer, SIGNAL(timeout()), this, SLOT(drainBattery()));
         timer->start();
-        timerForTime->start(100); //every minute
+        timerForTime->start(10000); //every minute
     }else{
         //stop timer as power is off
         timer->stop();
@@ -358,7 +355,7 @@ void MainWindow::drainBattery(){
     if (powerStatus){
         //Check for low battery
         if (ui->batteryLevelBar->value() < 20 && !lowBatteryMessage){
-            qInfo("Low Battery");
+            //qInfo("Low Battery");
             BatteryLowMessage batteryLow;
             batteryLow.exec();
             lowBatteryMessage = true; // display the message only once
@@ -390,18 +387,6 @@ void MainWindow::drainBattery(){
     else {
         ui->batteryLevelBar->setStyleSheet(lowBatteryHealth);
     }
-}
-
-void MainWindow::setVisibility(bool powerStatus){
-    //check if power is on to make it visible
-    if (powerStatus){
-        ui->dateTimeEdit->setVisible(true);
-        ui->batteryLevelBar->setVisible(true);
-    }else{
-        ui->dateTimeEdit->setVisible(false);
-        ui->batteryLevelBar->setVisible(false);
-    }
-
 }
 
 void MainWindow::displayCurrentDateAndTime(){

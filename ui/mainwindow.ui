@@ -636,7 +636,7 @@ QProgressBar {
       <number>0</number>
      </property>
      <property name="value">
-      <number>5</number>
+      <number>100</number>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>

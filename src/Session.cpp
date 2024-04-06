@@ -196,10 +196,11 @@ void Session::informUser(){
     qInfo() << message;
 }
 
-void Session::initBools(bool eegs[])
-{
-    for (int i =0; i< 21;i++){
+void Session::initBools(bool eegs[]){
+    qInfo("reached here");
+    for (int i =0; i< 20;i++){
         eegConnections[i] = eegs[i];
+        qInfo("now reached here");
         qInfo("EEg at %d is %d",i,eegs[i]);
     }
 }

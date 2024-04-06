@@ -117,7 +117,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(60000); // every minute should be 60000
+    timer->setInterval(600); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -272,7 +272,7 @@ void MainWindow::navigateSubMenu(){
             qInfo("New Session Function Goes Here");
 
             if(currentSession == nullptr){
-             //   currentSession->initBools(isConnected);
+               //currentSession->initBools(isConnected);
 
                 currentSession = startSession();
             }
@@ -374,11 +374,15 @@ void MainWindow::drainBattery(){
         //check if battery level is not 0
         if (ui->batteryLevelBar->value() != 0){
             //decrease by 1
+            if (ui->batteryLevelBar->value() ==5){
+                currentSession->stopSession();
+            }
             ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 1);
-        }else{
+         }else{
             //turn off the device
             qInfo("Power Off");
             powerStatus = false;
+            //  stop treatment
             changePowerStatus();
             timer->stop();
         }

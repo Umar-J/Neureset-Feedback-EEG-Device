@@ -227,10 +227,12 @@ bool Session::checkIfConnectionLost(){
             //call mainwindow stop session
             qInfo("eeg %d is disconnected-------------------------------",i);
             //make it red
+            emit turnOnRed(true);
             return true;
         }
 
     }
+    emit turnOnRed(false);
     return false;
 }
 

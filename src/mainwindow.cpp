@@ -170,8 +170,13 @@ void MainWindow::treatmentLedHandler(bool isOn){
     }
 
 }
-void MainWindow::lostLedHandler(){
+void MainWindow::lostLedHandler(bool isOn){
+    if (isOn){
     ui->lostLed->setStyleSheet("background-color:  red");
+    }else{
+        ui->lostLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
 
@@ -186,6 +191,7 @@ bool MainWindow::electrodeConnectionCheck(){
         }
     }
     qInfo("all nodes connected!!!!!!!!");
+    lostLedHandler(false);
     //make blue
     contactLedHandler(true);
     return true;
@@ -343,8 +349,6 @@ void MainWindow::applyElectrode(int i){
     electrodeConnectionCheck();
 
 }
-
-
 
 
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
@@ -540,6 +544,8 @@ Session* MainWindow::startSession(){
     Session* session = new Session(eegList);
     session->initBools(isConnected);
     connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
+    connect(session, &Session::turnOnRed, this, &MainWindow::lostLedHandler);
+
 
     session->startSession();
     return session;
@@ -578,5 +584,6 @@ void MainWindow::stopSession() {
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
     sessionsLog.append(currentSession);
+
     currentSession  = nullptr;
 }

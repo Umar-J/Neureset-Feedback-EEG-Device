@@ -49,7 +49,7 @@ private:
     void changePowerStatus();
     void contactLedHandler(bool);
     void treatmentLedHandler(bool);
-    void lostLedHandler();
+    void lostLedHandler(bool isOn);
     bool sessionInProgress;
 
     void setTime();

@@ -30,7 +30,9 @@ public:
 private:
     Ui::MainWindow *ui;
     //vector<bool> isConnected;
-    bool isConnected [21];
+    //bool isConnected [21];
+
+    bool* isConnected;
     QVector<QPushButton*> electrodes;
     Menu* masterMenu;
     Menu* mainMenu;

@@ -13,14 +13,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
-
+        isConnected = new bool[21];
+        for (int i = 0; i < 21; ++i) {
+            isConnected[i] = false; // or false, or some condition
+        }
         //initialize the current time and date
         currentTime = QTime::currentTime();
         currentDate = QDate::currentDate();
         sessionInProgress = false;
 
         //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
-        fill_n(isConnected, 21, false);
+        //fill_n(isConnected, 21, false);
 
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
@@ -117,7 +120,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(600); // every minute should be 60000
+    timer->setInterval(60000); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -161,8 +164,10 @@ void MainWindow::lostLedHandler(){
 }
 
 bool MainWindow::electrodeConnectionCheck(){
-    for (bool x: isConnected){
-        if (x==false){
+
+
+    for (int i = 0; i < 21; ++i) {
+        if (isConnected[i]==false){
             qInfo("all nodes not connected");
             return false;
         }
@@ -272,7 +277,6 @@ void MainWindow::navigateSubMenu(){
             qInfo("New Session Function Goes Here");
 
             if(currentSession == nullptr){
-               //currentSession->initBools(isConnected);
 
                 currentSession = startSession();
             }
@@ -339,8 +343,9 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 void MainWindow::navigateToMainMenu(){
     //check for ongoing therapy
     if(sessionInProgress){
-        qInfo("Stoppping current session");
+        qInfo("Stopping current session");
         currentSession->stopSession();
+        //add to logs
     }
 
     while (masterMenu->getName() != "MAIN MENU") {
@@ -507,6 +512,7 @@ void MainWindow::enableTreatmentButtons(bool status){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
+
     if(!(electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
         qInfo("Not gonna do treatment");
         return nullptr;
@@ -516,6 +522,7 @@ Session* MainWindow::startSession(){
     //enable the 3 buttons
     enableTreatmentButtons(true);
     Session* session = new Session(eegList);
+    session->initBools(isConnected); //
     session->startSession();
     return session;
 }
@@ -543,9 +550,9 @@ void MainWindow::stopSession() {
     if(currentSession == nullptr){
         return;
     }
-    if (sessionInProgress == false){
-        return;
-    }
+//    if (sessionInProgress == false){
+//        return;
+//    }
 sessionInProgress = false;
     currentSession->stopSession();
 
@@ -554,6 +561,4 @@ qInfo("stopping Session");
     navigateToMainMenu();
     sessionsLog.append(currentSession);
     currentSession  = nullptr;
-
-
 }

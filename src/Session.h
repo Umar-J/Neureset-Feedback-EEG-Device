@@ -8,9 +8,10 @@
 
 #include <QThread> // for QThread::sleep
 #include <QDebug>
+#include <vector>
 
 #include "EEG.h"
-
+using namespace std;
 
 /* Purpose of class: Session object to hold information about a session
  *
@@ -69,10 +70,12 @@ private:
     QString sessionName;
 
     QVector<EEG*> eegList;
-    bool eegConnections[21];
+    bool* eegConnections = new bool [21];
+    vector<bool> connections;
 
     QDateTime startTime;
     QDateTime endTime;
+    bool checkIfConnectionLost();
 
     QVector<int> startAverages; // Store start averages for each of the 21 EEG sites
     QVector<int> endAverages; // Store end averages for each of the 21 EEG sites

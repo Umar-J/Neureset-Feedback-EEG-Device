@@ -605,6 +605,7 @@ QPushButton:pressed {
       <bool>false</bool>
      </property>
      <property name="styleSheet">
+
       <string notr="true">QProgressBar {
     border: 2px solid #333; /* Dark border for definition */
     border-radius: 8px; /* Rounded corners */
@@ -612,6 +613,7 @@ QPushButton:pressed {
     text-align: center; /* Keep text centered */
     color: #333; /* Text color */
 }
+
 
 QProgressBar::chunk {
     background-color: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 0, stop: 0 #5cb85c, stop: 1 #4cae4c); /* Green gradient for charge */
@@ -646,6 +648,9 @@ QProgressBar::chunk[warning=&quot;true&quot;] {
      </property>
      <property name="invertedAppearance">
       <bool>false</bool>
+     </property>
+     <property name="textDirection">
+      <enum>QProgressBar::TopToBottom</enum>
      </property>
      <property name="format">
       <string>%p%</string>

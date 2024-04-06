@@ -11,6 +11,7 @@
 #include <QDateTime>
 #include <pthread.h>
 #include <unistd.h>
+#include "batterylowmessage.h"
 
 #include <QPushButton>
 

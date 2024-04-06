@@ -17,15 +17,18 @@ SOURCES += \
     $${source_dir}/EEG.cpp \
     $${source_dir}/menu.cpp \
     $${source_dir}/Session.cpp \
+    batterylowmessage.cpp
 
 HEADERS += \
     $${source_dir}/mainwindow.h \
     $${source_dir}/EEG.h \
     $${source_dir}/menu.h \
     $${source_dir}/Session.h \
+    batterylowmessage.h
 
 FORMS += \
-    $${forms_dir}/mainwindow.ui
+    $${forms_dir}/mainwindow.ui \
+    batterylowmessage.ui
 
 RESOURCES += \
     $${resources_dir}/denas.qrc

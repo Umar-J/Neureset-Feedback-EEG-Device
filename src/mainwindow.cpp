@@ -361,6 +361,7 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 }
 
 void MainWindow::navigateToMainMenu(){
+    lostLedHandler(false);
     //check for ongoing therapy
     if(sessionInProgress){
         qInfo("Stopping current session");
@@ -584,6 +585,6 @@ void MainWindow::stopSession() {
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
     sessionsLog.append(currentSession);
-
+    treatmentLedHandler(false);
     currentSession  = nullptr;
 }

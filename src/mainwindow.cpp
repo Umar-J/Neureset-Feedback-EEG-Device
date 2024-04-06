@@ -274,11 +274,11 @@ void MainWindow::navigateSubMenu(){
     else if(masterMenu->get(index)->getMenuItems().length() == 0 && (masterMenu->getName() == "MAIN MENU")) {
         if (index ==0){
             updateMenu("New Session", {});
-            qInfo("New Session Function Goes Here");
 
             if(currentSession == nullptr){
 
                 currentSession = startSession();
+
             }
             else{
                 //display currentSession
@@ -347,7 +347,7 @@ void MainWindow::navigateToMainMenu(){
         currentSession->stopSession();
         //add to logs
     }
-
+    stopSession();
     while (masterMenu->getName() != "MAIN MENU") {
         masterMenu = masterMenu->getParent();
     }
@@ -550,13 +550,13 @@ void MainWindow::stopSession() {
     if(currentSession == nullptr){
         return;
     }
-//    if (sessionInProgress == false){
-//        return;
-//    }
-sessionInProgress = false;
+    if (sessionInProgress == false){
+        return;
+    }
+    sessionInProgress = false;
     currentSession->stopSession();
 
-qInfo("stopping Session");
+    qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
     sessionsLog.append(currentSession);

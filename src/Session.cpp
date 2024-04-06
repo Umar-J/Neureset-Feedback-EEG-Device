@@ -222,6 +222,7 @@ bool Session::checkIfConnectionLost(){
     for (int i =0; i< 21;i++){
         if (eegConnections[i] == false){
             stopSession();
+            //call mainwindow stop session
             qInfo("eeg %d is disconnected-------------------------------",i);
             return true;
         }

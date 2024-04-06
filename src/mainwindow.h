@@ -31,7 +31,9 @@ public:
 private:
     Ui::MainWindow *ui;
     //vector<bool> isConnected;
-    bool isConnected [21];
+    //bool isConnected [21];
+
+    bool* isConnected;
     QVector<QPushButton*> electrodes;
     Menu* masterMenu;
     Menu* mainMenu;
@@ -46,16 +48,19 @@ private:
     bool powerStatus;
     bool lowBatteryMessage = false;
     void changePowerStatus();
-    void contactLedHandler();
-    void treatmentLedHandler();
-    void lostLedHandler();
+    void contactLedHandler(bool);
+    void treatmentLedHandler(bool);
+    void lostLedHandler(bool isOn);
+    bool sessionInProgress;
 
     void setTime();
     void setDate();
     void displayCurrentDateAndTime();
     void setVisibility(bool powerStatus);
+    void updateContactLed();
 
     bool electrodeConnectionCheck();
+    void enableTreatmentButtons(bool);
 
 
 // *** TODO: Implement these before un-commenting

@@ -19,7 +19,8 @@ Session::Session(QVector<EEG*> eegList){
 
     //FOR DEMONSTATION
     calculationTime = 5000;
-
+    //qInfo("%d",connections[1]);
+    qInfo("ctor called");
 }
 
 Session::~Session(){
@@ -41,6 +42,7 @@ QVector<int> Session::getEndAverages() { return endAverages; }
 void Session::startSession(){
 
     //Keeps track of time
+    checkIfConnectionLost();
     startTime = QDateTime::currentDateTime();
 
     //Calculate the overall baseline for all 21 EEG sites concurrently at the start of the session
@@ -66,6 +68,7 @@ void Session::startSession(){
 
 void Session::playSession(){
     // Start or resume session
+    checkIfConnectionLost();
     currentTimer->start();
     startTime = QDateTime::currentDateTime();
 }
@@ -97,6 +100,7 @@ void Session::stopSession(){
 }
 
 QVector<int> Session::calculateBaselineAvg() {
+    checkIfConnectionLost();
     QVector<int> baselineAvg;
     for(int i = 0; i < eegList.size(); i++){
         baselineAvg.append(eegList[i]->getBaseline());
@@ -114,6 +118,7 @@ QVector<int> Session::calculateBaselineAvg() {
 void Session::calculateBaselineFrequency() {
 
     //recursively calls calculate 21 times
+    checkIfConnectionLost();
     if(currentSiteIndex < 20){
 
         EEG* site = eegList[currentSiteIndex];
@@ -135,6 +140,7 @@ void Session::calculateBaselineFrequency() {
 
 void Session::startTreatment(int frequency, EEG* site){
     // Start treatment, flash green light
+    checkIfConnectionLost();
     greenLightOn();
 
 
@@ -150,6 +156,10 @@ void Session::startTreatment(int frequency, EEG* site){
 
 void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations) {
     //add an offset frequency of 5hz to the baseline frequency
+    if(checkIfConnectionLost()){
+        qInfo("eeg disconnected,returning");
+        return;
+    }
     frequency = frequency + 5;
 
     //Updates baseline frequency
@@ -185,15 +195,45 @@ void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRec
 
 void Session::greenLightOn(){
     //MainWindow::treatmentLedHandler();
+    emit turnOnGreen(true);
 }
 
 void Session::greenLightOff(){
     //MainWindow::treatmentLedHandler();
+    emit turnOnGreen(false);
 }
 
 void Session::informUser(){
     QString message = QString("Session Complete! Elapsed Time: %1").arg(time);
     qInfo() << message;
+}
+
+void Session::initBools(bool eegs[]){
+    //qInfo("reached here");
+    eegConnections = eegs;
+    connections = vector<bool>(21, false);
+    for (int i =0; i< 21;i++){
+       //qInfo("EEg at %d is %d",i,eegs[i]);
+        connections[i] = eegs[i];
+       // qInfo("EEg at %d is %d",i,eegs[i]);
+    }
+   // qInfo("Now hwere");
+}
+
+bool Session::checkIfConnectionLost(){
+    for (int i =0; i< 21;i++){
+        if (eegConnections[i] == false){
+            stopSession();
+            //call mainwindow stop session
+            qInfo("eeg %d is disconnected-------------------------------",i);
+            //make it red
+            emit turnOnRed(true);
+            return true;
+        }
+
+    }
+    emit turnOnRed(false);
+    return false;
 }
 
 int Session::getElapsedTime() {
@@ -204,4 +244,6 @@ int Session::getElapsedTime() {
     int elapsedTime = static_cast<int>(elapsedTimeInMilliseconds / inSeconds);
     return elapsedTime;
 }
+
+
 

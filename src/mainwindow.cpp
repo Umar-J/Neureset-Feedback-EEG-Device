@@ -13,14 +13,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
-
+        isConnected = new bool[21];
+        for (int i = 0; i < 21; ++i) {
+            isConnected[i] = false; // or false, or some condition
+        }
         //initialize the current time and date
         currentTime = QTime::currentTime();
         currentDate = QDate::currentDate();
-
+        sessionInProgress = false;
 
         //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
-        fill_n(isConnected, 21, false);
+        //fill_n(isConnected, 21, false);
 
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
@@ -115,7 +118,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(600); // every minute should be 60000
+    timer->setInterval(60000); // every minute should be 60000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -146,28 +149,51 @@ void MainWindow::changePowerStatus(){
 
 }
 
-void MainWindow::contactLedHandler(){
-    ui->contactLed->setStyleSheet("background-color:  blue");
+void MainWindow::contactLedHandler(bool isOn){
+    if (isOn){
+        ui->contactLed->setStyleSheet("background-color:  blue");
+
+    }else{
+        ui->contactLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
 
-void MainWindow::treatmentLedHandler(){
-    ui->treatmentLed->setStyleSheet("background-color:  green");
+void MainWindow::treatmentLedHandler(bool isOn){
+    if (isOn){
+        ui->treatmentLed->setStyleSheet("background-color:  green");
+
+    }else{
+        ui->treatmentLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
-void MainWindow::lostLedHandler(){
+void MainWindow::lostLedHandler(bool isOn){
+    if (isOn){
     ui->lostLed->setStyleSheet("background-color:  red");
+    }else{
+        ui->lostLed->setStyleSheet("background-color:  grey");
+
+    }
 
 }
 
 bool MainWindow::electrodeConnectionCheck(){
-    for (bool x: isConnected){
-        if (x==false){
+
+
+    for (int i = 0; i < 21; ++i) {
+        if (isConnected[i]==false){
             qInfo("all nodes not connected");
+            contactLedHandler(false);
             return false;
         }
     }
     qInfo("all nodes connected!!!!!!!!");
+    lostLedHandler(false);
+    //make blue
+    contactLedHandler(true);
     return true;
 }
 
@@ -269,10 +295,11 @@ void MainWindow::navigateSubMenu(){
     else if(masterMenu->get(index)->getMenuItems().length() == 0 && (masterMenu->getName() == "MAIN MENU")) {
         if (index ==0){
             updateMenu("New Session", {});
-            qInfo("New Session Function Goes Here");
 
             if(currentSession == nullptr){
+
                 currentSession = startSession();
+
             }
             else{
                 //display currentSession
@@ -309,19 +336,18 @@ void MainWindow::applyElectrode(int i){
     isConnected[i] = !isConnected[i]; // flip on click
     if (isConnected[i]){
         electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
-        qInfo("eeg at %d is connected", i);
-        qInfo("%d", isConnected[i]);
-        electrodeConnectionCheck();
+       // qInfo("eeg at %d is connected", i);
+      //  qInfo("%d", isConnected[i]);
+     //   electrodeConnectionCheck();
     }else{
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
-        qInfo("eeg at %d is disconected", i);
-        qInfo("%d", isConnected[i]);
+     //   qInfo("eeg at %d is disconected", i);
+      //  qInfo("%d", isConnected[i]);
 
     }
+    electrodeConnectionCheck();
 
 }
-
-
 
 
 void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList menuItems) {
@@ -334,13 +360,22 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 }
 
 void MainWindow::navigateToMainMenu(){
+    lostLedHandler(false);
     //check for ongoing therapy
+    if(sessionInProgress){
+        qInfo("Stopping current session");
+        currentSession->stopSession();
+        //add to logs
+    }
+    stopSession();
     while (masterMenu->getName() != "MAIN MENU") {
         masterMenu = masterMenu->getParent();
     }
 
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
     //Time and Date Widgets (use for updating time and date)
+    //disable play pause and stop buttons
+    enableTreatmentButtons(false);
     ui->timeEdit->setVisible(false);
     ui->dateEdit->setVisible(false);
 }
@@ -366,11 +401,15 @@ void MainWindow::drainBattery(){
         //check if battery level is not 0
         if (ui->batteryLevelBar->value() != 0){
             //decrease by 1
+            if (ui->batteryLevelBar->value() ==5){
+                currentSession->stopSession();
+            }
             ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 1);
-        }else{
+         }else{
             //turn off the device
             qInfo("Power Off");
             powerStatus = false;
+            //  stop treatment
             changePowerStatus();
             ui->timeEdit->setVisible(false);
             ui->dateEdit->setVisible(false);
@@ -488,18 +527,31 @@ QStringList MainWindow::deviceLogsPreview(QStringList sessionList, int numSessio
     return sessionList;
 }
 
-
+void MainWindow::enableTreatmentButtons(bool status){
+    ui->pauseButton->setEnabled(status);
+    ui->playButton->setEnabled(status);
+    ui->stopButton->setEnabled(status);
+}
 
 
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-    if(!(electrodeConnectionCheck() && ui->batteryLevelBar->value() < 10)){
+
+    if((!electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
     qInfo("yess gonna do treatment");
+    sessionInProgress = true;
+    //enable the 3 buttons
+    enableTreatmentButtons(true);
     Session* session = new Session(eegList);
+    session->initBools(isConnected);
+    connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
+    connect(session, &Session::turnOnRed, this, &MainWindow::lostLedHandler);
+
+
     session->startSession();
     return session;
 }
@@ -508,7 +560,8 @@ void MainWindow::playSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    qInfo("resuming session");
+    sessionInProgress = true;
     currentSession->playSession();
 
 }
@@ -517,7 +570,8 @@ void MainWindow::pauseSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    qInfo("pausing Session");
+    sessionInProgress = false;
     currentSession->pauseSession();
 }
 
@@ -525,9 +579,16 @@ void MainWindow::stopSession() {
     if(currentSession == nullptr){
         return;
     }
-
+    if (sessionInProgress == false){
+        return;
+    }
+    sessionInProgress = false;
     currentSession->stopSession();
 
+    qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
-
+    navigateToMainMenu();
+    sessionsLog.append(currentSession);
+    treatmentLedHandler(false);
+    currentSession  = nullptr;
 }

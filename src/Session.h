@@ -8,9 +8,10 @@
 
 #include <QThread> // for QThread::sleep
 #include <QDebug>
+#include <vector>
 
 #include "EEG.h"
-
+using namespace std;
 
 /* Purpose of class: Session object to hold information about a session
  *
@@ -55,6 +56,9 @@ public:
     void pauseSession();
     void stopSession();
 
+    void initBools(bool eegs[]);
+    void greenLightOn();
+
 private:
     int time;
     int currentSiteIndex;
@@ -67,9 +71,12 @@ private:
     QString sessionName;
 
     QVector<EEG*> eegList;
+    bool* eegConnections = new bool [21];
+    vector<bool> connections;
 
     QDateTime startTime;
     QDateTime endTime;
+    bool checkIfConnectionLost();
 
     QVector<int> startAverages; // Store start averages for each of the 21 EEG sites
     QVector<int> endAverages; // Store end averages for each of the 21 EEG sites
@@ -82,11 +89,16 @@ private:
     void calculateBaselineFrequency();
     void recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations);
 
-    void greenLightOn();
+
     void greenLightOff();
     void informUser();
 
+
     int getElapsedTime();
+signals:
+    void turnOnGreen(bool);
+    void turnOnRed(bool);
+
 
 };
 

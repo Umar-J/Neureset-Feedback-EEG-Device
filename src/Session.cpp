@@ -6,6 +6,9 @@ Session::Session(QVector<EEG*> eegList){
     //id increment
     id = ++idCounter;
 
+    numRounds = 4;
+    currentRound = 1;
+
     this->currentSiteIndex = 0;
 
     sessionName = "Session " + QString::number(id);
@@ -13,6 +16,8 @@ Session::Session(QVector<EEG*> eegList){
     currentTimer = new QTimer(this);
 
     this->eegList = eegList;
+
+    eegConnections = new bool [eegList.size()];
 
     //Minute * seconds * miliseconds
     //calculationTime = 1 * 60 * 1000;
@@ -45,24 +50,15 @@ void Session::startSession(){
     checkIfConnectionLost();
     startTime = QDateTime::currentDateTime();
 
-    //Calculate the overall baseline for all 21 EEG sites concurrently at the start of the session
+    //Calculate the overall baseline for all EEG sites concurrently at the start of the session
+    qInfo("processing input waveform...");
     currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
         startAverages = calculateBaselineAvg();
-
-        // Calculate the baseline frequency for the current EEG site in the span of calculationTime
-        currentTimer->stop();
-        currentTimer = new QTimer(this);
-        connect(currentTimer, &QTimer::timeout, this, [=](){
-            this->calculateBaselineFrequency();
-        });
-        currentTimer->start(calculationTime);
-
+        this->startRound();
     });
     currentTimer->start(calculationTime);
-
-
 }
 
 
@@ -86,7 +82,7 @@ void Session::stopSession(){
     endTime = QDateTime::currentDateTime();
     time += getElapsedTime();
 
-    // Calculate the overall baseline for all 21 EEG sites concurrently at the end of the session
+    // Calculate the overall baseline for all EEG sites concurrently at the end of the session
     currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
@@ -94,103 +90,87 @@ void Session::stopSession(){
         endAverages = calculateBaselineAvg();
         //Inform the user about the session completion
         informUser();
+
+        //resets baseline frequency for next sesison
+        for(int i = 0; i< eegList.size(); i++){
+            eegList[i]->updateBaseline(-1);
+        }
+
+        emit sessionEnded();
     });
     currentTimer->start(calculationTime);
+}
 
+void Session::startRound() {
+
+    if(currentRound == 1) qInfo("Processing Complete.");
+
+    checkIfConnectionLost();
+
+// BRING THIS BACK IF RECALCUATION IS NEEDED EVERYTIME (OPTION 1)
+//    for(int i = 0; i < eegList.size(); i++){
+//        eegList[i]->calculateDominantFrequency();
+//    }
+
+    if(currentRound <= 4){
+        QString roundMessage = QString("Round %1 of therapy").arg(currentRound);
+        qInfo() << roundMessage;
+        qInfo("Calculating dominant frequency...");
+
+        qInfo("delivering the 1 sec feedback at 1/16 of dominant + offset...");
+
+        greenLightOn();
+
+        currentTimer->stop();
+        currentTimer = new QTimer(this);
+        connect(currentTimer, &QTimer::timeout, this, [=](){
+            startTreatment();
+        });
+        currentTimer->start(1000);
+    }
+    else{
+        stopSession();
+    }
 }
 
 QVector<int> Session::calculateBaselineAvg() {
     checkIfConnectionLost();
     QVector<int> baselineAvg;
     for(int i = 0; i < eegList.size(); i++){
+        eegList[i]->calculateDominantFrequency();
         baselineAvg.append(eegList[i]->getBaseline());
-
-        QString message = QString("EEG %1's baseline average: %2").arg(i).arg(eegList[i]->getBaseline());
+        QString message = QString("EEG %1's baseline average: %2").arg(i+1).arg(eegList[i]->getBaseline());
         qInfo() << message;
     }
-
     currentTimer->stop();
 
     return baselineAvg;
 }
 
 
-void Session::calculateBaselineFrequency() {
-
-    //recursively calls calculate 21 times
-    checkIfConnectionLost();
-    if(currentSiteIndex < 20){
-
-        EEG* site = eegList[currentSiteIndex];
-
-        //Gets baseline Frequency
-        int baselineFrequency = site->getBaseline();
-
-        qInfo("CALCULATION DONE");
-
-        //When done calculating Start Treatment
-        startTreatment(baselineFrequency, site);
-
-    }
-    else{
-        stopSession();
-    }
-
-}
-
-void Session::startTreatment(int frequency, EEG* site){
+void Session::startTreatment(){
     // Start treatment, flash green light
     checkIfConnectionLost();
-    greenLightOn();
+    greenLightOff();
 
+    //Treat ALL eeg sites concurrently
+    double offset = currentRound * 5;
 
-    // Recalculate the brainwave frequency every 1/16th of a second, 16 times (duration of a second)
+    for(int i = 0; i < eegList.size(); i++){
+        eegList[i]->applyTreatment(offset);
+    }
+
+    QString roundMessage = QString("Round %1 Complete.").arg(currentRound);
+    qInfo() << roundMessage;
+
+    currentRound++;
+
     currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
-        recalculateBrainwaveFrequency(frequency, site, 1);
+        this->startRound();
     });
-    currentTimer->start(63);
-}
-
-
-void Session::recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations) {
-    //add an offset frequency of 5hz to the baseline frequency
-    if(checkIfConnectionLost()){
-        qInfo("eeg disconnected,returning");
-        return;
-    }
-    frequency = frequency + 5;
-
-    //Updates baseline frequency
-    site->updateBaseline(frequency);
-
-    qInfo("RECALCULATION DONE");
-
-    //recursively calls recalculate 16 times
-    if(numRecalculations < 16){
-        currentTimer->stop();
-        currentTimer = new QTimer(this);
-        connect(currentTimer, &QTimer::timeout, this, [=](){
-            recalculateBrainwaveFrequency(site->getBaseline(), site, numRecalculations + 1);
-        });
-        currentTimer->start(63);
-    }
-
-    if(numRecalculations == 16){
-        // flash green light
-        greenLightOff();
-
-        //Treatment done, go to next site
-        currentSiteIndex++;
-
-        currentTimer->stop();
-        currentTimer = new QTimer(this);
-        connect(currentTimer, &QTimer::timeout, this, [=](){
-            this->calculateBaselineFrequency();
-        });
-        currentTimer->start(calculationTime);
-    }
+    currentTimer->start(calculationTime);
 }
 
 void Session::greenLightOn(){
@@ -206,13 +186,15 @@ void Session::greenLightOff(){
 void Session::informUser(){
     QString message = QString("Session Complete! Elapsed Time: %1").arg(time);
     qInfo() << message;
+
+    currentTimer->stop();
 }
 
 void Session::initBools(bool eegs[]){
     //qInfo("reached here");
     eegConnections = eegs;
-    connections = vector<bool>(21, false);
-    for (int i =0; i< 21;i++){
+    connections = vector<bool>(eegList.size(), false);
+    for (int i =0; i< eegList.size();i++){
        //qInfo("EEg at %d is %d",i,eegs[i]);
         connections[i] = eegs[i];
        // qInfo("EEg at %d is %d",i,eegs[i]);
@@ -221,7 +203,7 @@ void Session::initBools(bool eegs[]){
 }
 
 bool Session::checkIfConnectionLost(){
-    for (int i =0; i< 21;i++){
+    for (int i =0; i< eegList.size();i++){
         if (eegConnections[i] == false){
             stopSession();
             //call mainwindow stop session
@@ -238,7 +220,7 @@ bool Session::checkIfConnectionLost(){
 
 int Session::getElapsedTime() {
     int inSeconds = 1000;
-    int inMinutes = 60000;
+    //int inMinutes = 60000;
 
     qint64 elapsedTimeInMilliseconds = startTime.msecsTo(endTime);
     int elapsedTime = static_cast<int>(elapsedTimeInMilliseconds / inSeconds);

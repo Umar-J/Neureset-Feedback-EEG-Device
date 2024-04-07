@@ -605,7 +605,6 @@ QPushButton:pressed {
       <bool>false</bool>
      </property>
      <property name="styleSheet">
-
       <string notr="true">QProgressBar {
     border: 2px solid #333; /* Dark border for definition */
     border-radius: 8px; /* Rounded corners */
@@ -1672,13 +1671,34 @@ QPushButton:pressed {
     <property name="geometry">
      <rect>
       <x>40</x>
-      <y>470</y>
+      <y>430</y>
       <width>171</width>
       <height>17</height>
      </rect>
     </property>
     <property name="text">
      <string>Frequency Generator:</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>30</x>
+      <y>490</y>
+      <width>831</width>
+      <height>251</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="waveformLayout"/>
+   </widget>
+   <widget class="QComboBox" name="eegSelector">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>430</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
     </property>
    </widget>
   </widget>

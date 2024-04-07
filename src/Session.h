@@ -60,6 +60,10 @@ public:
     void greenLightOn();
 
 private:
+
+    int numRounds;
+    int currentRound;
+
     int time;
     int currentSiteIndex;
 
@@ -67,11 +71,10 @@ private:
 
     QTimer* timer;
     QTimer* currentTimer;
-
     QString sessionName;
 
     QVector<EEG*> eegList;
-    bool* eegConnections = new bool [21];
+    bool* eegConnections;
     vector<bool> connections;
 
     QDateTime startTime;
@@ -85,10 +88,8 @@ private:
     int id; // Stores the unique id for each Session object
 
     QVector<int> calculateBaselineAvg();
-    void startTreatment(int frequency, EEG* site);
-    void calculateBaselineFrequency();
-    void recalculateBrainwaveFrequency(int frequency, EEG* site, int numRecalculations);
-
+    void startRound();
+    void startTreatment();
 
     void greenLightOff();
     void informUser();
@@ -98,8 +99,7 @@ private:
 signals:
     void turnOnGreen(bool);
     void turnOnRed(bool);
-
-
+    void sessionEnded();
 };
 
 #endif // SESSION_H

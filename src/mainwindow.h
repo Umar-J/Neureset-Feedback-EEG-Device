@@ -32,7 +32,7 @@ private:
     Ui::MainWindow *ui;
     //vector<bool> isConnected;
     //bool isConnected [21];
-
+    int numEEGs;
     bool* isConnected;
     QVector<QPushButton*> electrodes;
     Menu* masterMenu;
@@ -62,6 +62,7 @@ private:
     bool electrodeConnectionCheck();
     void enableTreatmentButtons(bool);
 
+    void onEegSelected(int index);
 
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();
@@ -92,6 +93,8 @@ private slots:
     void drainBattery();
 
     void applyElectrode(int);
+
+    void handleSessionEnded();
 
 //    void applyEEG(int);
 

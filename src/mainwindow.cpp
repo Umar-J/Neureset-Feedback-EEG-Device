@@ -13,8 +13,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
 
     ui->setupUi(this);
-        isConnected = new bool[21];
-        for (int i = 0; i < 21; ++i) {
+
+        this->numEEGs = 7;
+        isConnected = new bool[numEEGs];
+        for (int i = 0; i < numEEGs; ++i) {
             isConnected[i] = false; // or false, or some condition
         }
         //initialize the current time and date
@@ -23,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
         sessionInProgress = false;
 
         //fill(isConnected.begin(), isConnected.end(), false); //set electrode connection to false
-        //fill_n(isConnected, 21, false);
+        //fill_n(isConnected, numEEGs, false);
 
         masterMenu = new Menu("MAIN MENU", {"New Session","Session Log","Time & Date"}, nullptr);
         mainMenu = masterMenu;
@@ -55,8 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->timeEdit->setVisible(false);
         ui->dateEdit->setVisible(false);
 
-
-        for(int i = 0; i <= 20; i++) {
+        for(int i = 0; i < numEEGs; i++) {
             QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
             //can put connect here
             connect(button, &QPushButton::clicked, this, [this, i]() { applyElectrode(i); });
@@ -68,8 +69,8 @@ MainWindow::MainWindow(QWidget *parent)
         //electrodes.at(0)->setStyleSheet("background-color:  red");
         //electrodes.at(20)->setStyleSheet("background-color:  red");
 
-        //Creates all 21 EEG objects
-        for(int i = 0; i < 21; i++){
+        //Creates all EEG objects
+        for(int i = 0; i < numEEGs; i++){
             EEG* eeg = new EEG(i);
             eegList.append(eeg);
         }
@@ -80,6 +81,13 @@ MainWindow::MainWindow(QWidget *parent)
         connect(ui->playButton, &QPushButton::clicked, this, &MainWindow::playSession);
         connect(ui->pauseButton, &QPushButton::clicked, this, &MainWindow::pauseSession);
         connect(ui->stopButton, &QPushButton::clicked, this, &MainWindow::stopSession);
+
+        // Connect the waveformReady signal to a slot
+        for(int i = 0; i < eegList.size(); i++){
+            ui->eegSelector->addItem(QString::number(i+1));
+        }
+
+        connect(ui->eegSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onEegSelected);
 
 }
 MainWindow::~MainWindow()
@@ -183,7 +191,7 @@ void MainWindow::lostLedHandler(bool isOn){
 bool MainWindow::electrodeConnectionCheck(){
 
 
-    for (int i = 0; i < 21; ++i) {
+    for (int i = 0; i < numEEGs; ++i) {
         if (isConnected[i]==false){
             qInfo("all nodes not connected");
             contactLedHandler(false);
@@ -339,10 +347,19 @@ void MainWindow::applyElectrode(int i){
        // qInfo("eeg at %d is connected", i);
       //  qInfo("%d", isConnected[i]);
      //   electrodeConnectionCheck();
+
+        //WHEN EEG CONNECTS TO HEAD GENERATE WAVEFORMS
+        eegList[i]->generateWaveforms();
+        onEegSelected(ui->eegSelector->currentIndex());
+
     }else{
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
      //   qInfo("eeg at %d is disconected", i);
       //  qInfo("%d", isConnected[i]);
+
+        //WHEN EEG DISCONNECTS FROM HEAD DELETE WAVEFORMS
+        eegList[i]->deleteWaveforms();
+        onEegSelected(ui->eegSelector->currentIndex());
 
     }
     electrodeConnectionCheck();
@@ -367,7 +384,7 @@ void MainWindow::navigateToMainMenu(){
         currentSession->stopSession();
         //add to logs
     }
-    stopSession();
+    //stopSession();
     while (masterMenu->getName() != "MAIN MENU") {
         masterMenu = masterMenu->getParent();
     }
@@ -537,8 +554,7 @@ void MainWindow::enableTreatmentButtons(bool status){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
-
-    if((!electrodeConnectionCheck()) || ui->batteryLevelBar->value() < 10){
+    if((!electrodeConnectionCheck() || ui->batteryLevelBar->value() < 10)){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
@@ -550,6 +566,7 @@ Session* MainWindow::startSession(){
     session->initBools(isConnected);
     connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
     connect(session, &Session::turnOnRed, this, &MainWindow::lostLedHandler);
+    connect(session, &Session::sessionEnded, this, &MainWindow::handleSessionEnded);
 
 
     session->startSession();
@@ -585,6 +602,32 @@ void MainWindow::stopSession() {
     sessionInProgress = false;
     currentSession->stopSession();
 
+    qInfo("stopping Session");
+    qInfo("Add Current Session to sessionsLog Here!");
+    navigateToMainMenu();
+    sessionsLog.append(currentSession);
+    treatmentLedHandler(false);
+    currentSession  = nullptr;
+}
+
+void MainWindow::onEegSelected(int index){
+    EEG* eeg = eegList[index];
+    // Clear the layout if it's not empty
+    if (ui->waveformLayout->count() > 0) {
+        QLayoutItem* item = ui->waveformLayout->takeAt(0);
+        if (QWidget* widget = item->widget()) {
+            widget->deleteLater();
+        }
+        delete item;
+    }
+
+    QChartView* chartView = eeg->plotWaveform();
+
+    if(chartView != nullptr) ui->waveformLayout->addWidget(chartView);
+}
+
+void MainWindow::handleSessionEnded() {
+    sessionInProgress = false;
     qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();

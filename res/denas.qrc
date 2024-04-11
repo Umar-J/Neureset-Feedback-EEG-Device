@@ -15,5 +15,7 @@
         <file>buttons/pauseButton.svg</file>
         <file>buttons/playButton.svg</file>
         <file>buttons/stopButton.svg</file>
+        <file>logs.txt</file>
+        <file>logs2.txt</file>
     </qresource>
 </RCC>

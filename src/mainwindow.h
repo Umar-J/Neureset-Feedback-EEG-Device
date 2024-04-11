@@ -12,6 +12,10 @@
 #include <pthread.h>
 #include <unistd.h>
 #include "batterylowmessage.h"
+#include <QFile>
+#include <QTextStream>
+#include <QDebug>
+#include <QFile>
 
 #include <QPushButton>
 
@@ -30,6 +34,8 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    void loadLogsBrowser();
+    QFile* logFile;
     //vector<bool> isConnected;
     //bool isConnected [21];
     int numEEGs;
@@ -79,6 +85,7 @@ private:
 
     Session* currentSession;
     Session* startSession();
+    void writeLogsToFile();
 
 private slots:
     void pauseSession();

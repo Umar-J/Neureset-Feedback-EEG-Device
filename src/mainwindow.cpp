@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <iostream>
+
 #include <QTextStream>
 #include "Session.h"
 //forward reference
@@ -56,6 +57,7 @@ MainWindow::MainWindow(QWidget *parent)
         //Time and Date Widgets (use for updating time and date)
         ui->timeEdit->setVisible(false);
         ui->dateEdit->setVisible(false);
+        ui->progressBar->setVisible(false);
 
         for(int i = 0; i < numEEGs; i++) {
             QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
@@ -88,6 +90,15 @@ MainWindow::MainWindow(QWidget *parent)
         }
 
         connect(ui->eegSelector, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::onEegSelected);
+        logFile = new QFile("logsFinal.txt");
+//        if (!logFile->open(QIODevice::ReadWrite)) {
+//                qWarning() << "Cannot open file for reading and writing:" << logFile->errorString();
+//                return;
+//            }else{
+//            qInfo("working");
+
+//        }
+
 
 }
 MainWindow::~MainWindow()
@@ -98,6 +109,7 @@ MainWindow::~MainWindow()
 
     delete ui;
 }
+
 
 void MainWindow::initializeMainMenu(Menu * m){
 
@@ -260,7 +272,9 @@ void MainWindow::navigateSubMenu(){
     //uploading to Pc
     if (masterMenu->getName() == "Upload To Pc"){
         if (masterMenu->getMenuItems() [index] == "YES"){
-            sendLogstoPC();
+            //sendLogstoPC(); // ali function
+            writeLogsToFile();
+            loadLogsBrowser();
             return;
         }
         else {
@@ -280,6 +294,7 @@ void MainWindow::navigateSubMenu(){
 
                 sessionList = deviceLogsPreview(sessionList, numSessions);
                 updateMenu("Preview Logs", sessionList);
+                //loadLogsBrowser();
 
 
             }else{
@@ -341,6 +356,13 @@ void MainWindow::powerButtonHandler(){
 }
 
 void MainWindow::applyElectrode(int i){
+//    if(sessionInProgress){
+
+//        qInfo("Stopping current session");
+//        currentSession->stopSession();
+//        sessionInProgress = false;
+//        //add to logs
+//    }
     isConnected[i] = !isConnected[i]; // flip on click
     if (isConnected[i]){
         electrodes.at(i)->setStyleSheet("	background-color: rgb(87, 227, 137); border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
@@ -380,6 +402,7 @@ void MainWindow::navigateToMainMenu(){
     lostLedHandler(false);
     //check for ongoing therapy
     if(sessionInProgress){
+        sessionInProgress= false;
         qInfo("Stopping current session");
         currentSession->stopSession();
         //add to logs
@@ -397,7 +420,7 @@ void MainWindow::navigateToMainMenu(){
     ui->dateEdit->setVisible(false);
 }
 void MainWindow::goBack(){
-    qInfo("go Back Called");
+
     masterMenu = masterMenu->getParent();
     updateMenu(masterMenu->getName(), masterMenu->getMenuItems());
     //Time and Date Widgets (use for updating time and date)
@@ -490,43 +513,100 @@ void* updateDate(void* arg){
     return nullptr;
 
 }
+// used to write the logs file into the textbrowser
+void MainWindow::loadLogsBrowser(){
+qInfo("load logs browser");
+    if (logFile->open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QTextStream stream(logFile);
+        ui->textBrowser->setPlainText(stream.readAll()); // Use setHtml if your text is HTML
+        logFile->close();
+    } else {
+        // Handle error, file not found, etc.
+        ui->textBrowser->setPlainText("Failed to open file.");
+    }
+}
 
-//uploading the logs to the pc
+//uploading the logs to the pc(presistient storage)
 void MainWindow::sendLogstoPC(){
+//write to file
+//show on pc --- loadLogsBrowser()
 
+//    if(!sessionsLog.isEmpty()){
+//        ui->textBrowser->setText("Printing out Session Logs:\n");
 
-    if(!sessionsLog.isEmpty()){
-        ui->textBrowser->setText("Printing out Session Logs:\n");
+//        for(int sessionIndex = 0; sessionIndex < sessionsLog.size(); sessionIndex++){
 
-        for(int sessionIndex = 0; sessionIndex < sessionsLog.size(); sessionIndex++){
+//            //need to add time and date to this
+//            QString sessionID = QString("Session %1 ").arg(sessionsLog.at(sessionIndex)->getId());
+//            QDateTime currentDateTime = sessionsLog.at(sessionIndex)->getStartTime();
+//            QString dateTimeString = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+//            ui->textBrowser->append(QString("\n%1 took place at %2 ").arg(sessionID).arg(dateTimeString));
 
-            //need to add time and date to this
+//            ui->textBrowser->append(QString("Dominant Average Freqeuncies Before Treatment:"));
+//            QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
+//            QString outputString;
+//            for(int i = 0; i < beforeAverages.size(); i++) {
+//                outputString += QString::number(beforeAverages[i]) + " ";
+//            }
+//            ui->textBrowser->append(outputString);
+
+//            ui->textBrowser->append(QString("Dominant Average Freqeuncies After Treatment:"));
+//            QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
+//            QString outputString2;
+//            for(int i = 0; i < endAverages.size(); i++) {
+//                outputString2 += QString::number(endAverages[i]) + " ";
+//            }
+//            ui->textBrowser->append(outputString2);
+
+//        }
+
+//    }else{
+//        ui->textBrowser->setText("No Sessions have taken place, Session logs is currently empty \n");
+//    }
+    qInfo("send logs pc");
+    if (!sessionsLog.isEmpty()) {
+
+        if (!logFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "Cannot open file for writing:" << logFile->errorString();
+            return;
+        }
+        QTextStream output(logFile);
+        output<<"Session Log:\n";
+        for (int sessionIndex = 0; sessionIndex < sessionsLog.size(); ++sessionIndex) {
             QString sessionID = QString("Session %1 ").arg(sessionsLog.at(sessionIndex)->getId());
             QDateTime currentDateTime = sessionsLog.at(sessionIndex)->getStartTime();
             QString dateTimeString = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
-            ui->textBrowser->append(QString("\n%1 took place at %2 ").arg(sessionID).arg(dateTimeString));
+            output << "\n" << sessionID << "took place at " << dateTimeString << "\n";
 
-            ui->textBrowser->append(QString("Dominant Average Freqeuncies Before Treatment:"));
+            output << "Dominant Average Frequencies Before Treatment:\n";
             QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
             QString outputString;
-            for(int i = 0; i < beforeAverages.size(); i++) {
+            for (int i = 0; i < beforeAverages.size(); ++i) {
                 outputString += QString::number(beforeAverages[i]) + " ";
             }
-            ui->textBrowser->append(outputString);
+            output << outputString << "\n";
 
-            ui->textBrowser->append(QString("Dominant Average Freqeuncies After Treatment:"));
+            output << "Dominant Average Frequencies After Treatment:\n";
             QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
             QString outputString2;
-            for(int i = 0; i < endAverages.size(); i++) {
+            for (int i = 0; i < endAverages.size(); ++i) {
                 outputString2 += QString::number(endAverages[i]) + " ";
             }
-            ui->textBrowser->append(outputString2);
-
+            output << outputString2 << "\n";
         }
 
-    }else{
-        ui->textBrowser->setText("No Sessions have taken place, Session logs is currently empty \n");
+        logFile->close(); // Close the file when done
+    } else {
+        QFile file("session_logs.txt"); // Define the file to write to
+        if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            qDebug() << "Cannot open file for writing:" << file.errorString();
+            return;
+        }
+        ui->textBrowser->setText("No sessions have taken place yet!");;
     }
+
+
+
 }
 
 // display a preview of the log information on the device
@@ -559,6 +639,7 @@ Session* MainWindow::startSession(){
         return nullptr;
     }
     qInfo("yess gonna do treatment");
+    ui->progressBar->setVisible(true);
     sessionInProgress = true;
     //enable the 3 buttons
     enableTreatmentButtons(true);
@@ -571,6 +652,48 @@ Session* MainWindow::startSession(){
 
     session->startSession();
     return session;
+}
+
+void MainWindow::writeLogsToFile(){
+    // Check if the session log is not empty
+    if(!sessionsLog.isEmpty()){
+         // Specify the file name and path
+        if (!logFile->open(QIODevice::WriteOnly | QIODevice::Text)) {
+            // Handle error, could not open file for writing
+            return;
+        }
+        QTextStream out(logFile);
+        out << "Printing out Session Logs:\n";
+        out<<"using files\n";
+
+        for(int sessionIndex = 0; sessionIndex < sessionsLog.size(); sessionIndex++){
+            // Add time and date
+            QString sessionID = QString("Session %1 ").arg(sessionsLog.at(sessionIndex)->getId());
+            QDateTime currentDateTime = sessionsLog.at(sessionIndex)->getStartTime();
+            QString dateTimeString = currentDateTime.toString("yyyy-MM-dd hh:mm:ss");
+            out << QString("\n%1 took place at %2 ").arg(sessionID).arg(dateTimeString) << "\n";
+
+            out << "Dominant Average Frequencies Before Treatment:\n";
+            QVector<int> beforeAverages = sessionsLog[sessionIndex]->getStartAverages();
+            QString outputString;
+            for(int i = 0; i < beforeAverages.size(); i++) {
+                outputString += QString::number(beforeAverages[i]) + " ";
+            }
+            out << outputString << "\n";
+
+            out << "Dominant Average Frequencies After Treatment:\n";
+            QVector<int> endAverages = sessionsLog[sessionIndex]->getEndAverages();
+            QString outputString2;
+            for(int i = 0; i < endAverages.size(); i++) {
+                outputString2 += QString::number(endAverages[i]) + " ";
+            }
+            out << outputString2 << "\n";
+        }
+
+        logFile->close(); // Don't forget to close the file
+
+
+    }
 }
 
 void MainWindow::playSession() {

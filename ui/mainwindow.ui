@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1522</width>
+    <width>1138</width>
     <height>803</height>
    </rect>
   </property>
@@ -164,6 +164,22 @@ selection-background-color: rgb(122, 0, 0)</string>
       </property>
       <property name="currentRow">
        <number>-1</number>
+      </property>
+     </widget>
+     <widget class="QProgressBar" name="progressBar">
+      <property name="geometry">
+       <rect>
+        <x>50</x>
+        <y>100</y>
+        <width>118</width>
+        <height>23</height>
+       </rect>
+      </property>
+      <property name="value">
+       <number>0</number>
+      </property>
+      <property name="textVisible">
+       <bool>true</bool>
       </property>
      </widget>
     </widget>
@@ -709,6 +725,9 @@ QPushButton:pressed {
        <height>25</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: grey;</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -725,6 +744,9 @@ QPushButton:pressed {
        <height>25</height>
       </rect>
      </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: grey;</string>
+     </property>
      <property name="text">
       <string/>
      </property>
@@ -740,6 +762,9 @@ QPushButton:pressed {
        <width>21</width>
        <height>25</height>
       </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: grey;</string>
      </property>
      <property name="text">
       <string/>
@@ -864,7 +889,7 @@ QPushButton:pressed {
       <x>510</x>
       <y>40</y>
       <width>351</width>
-      <height>331</height>
+      <height>371</height>
      </rect>
     </property>
    </widget>
@@ -1707,7 +1732,7 @@ QPushButton:pressed {
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1522</width>
+     <width>1138</width>
      <height>22</height>
     </rect>
    </property>

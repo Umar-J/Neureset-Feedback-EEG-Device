@@ -55,8 +55,9 @@ void Session::startSession(){
     currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
+        checkIfConnectionLost();
         startAverages = calculateBaselineAvg();
-        this->startRound();
+        this->startRound(); 
     });
     currentTimer->start(calculationTime);
 }
@@ -124,6 +125,7 @@ void Session::startRound() {
         currentTimer->stop();
         currentTimer = new QTimer(this);
         connect(currentTimer, &QTimer::timeout, this, [=](){
+            checkIfConnectionLost();
             startTreatment();
         });
         currentTimer->start(1000);
@@ -137,6 +139,7 @@ QVector<int> Session::calculateBaselineAvg() {
     checkIfConnectionLost();
     QVector<int> baselineAvg;
     for(int i = 0; i < eegList.size(); i++){
+        checkIfConnectionLost();
         eegList[i]->calculateDominantFrequency();
         baselineAvg.append(eegList[i]->getBaseline());
         QString message = QString("EEG %1's baseline average: %2").arg(i+1).arg(eegList[i]->getBaseline());
@@ -157,6 +160,7 @@ void Session::startTreatment(){
     double offset = currentRound * 5;
 
     for(int i = 0; i < eegList.size(); i++){
+        checkIfConnectionLost();
         eegList[i]->applyTreatment(offset);
     }
 
@@ -205,11 +209,14 @@ void Session::initBools(bool eegs[]){
 bool Session::checkIfConnectionLost(){
     for (int i =0; i< eegList.size();i++){
         if (eegConnections[i] == false){
-            stopSession();
+
             //call mainwindow stop session
             qInfo("eeg %d is disconnected-------------------------------",i);
             //make it red
             emit turnOnRed(true);
+            pauseSession();
+            stopSession();
+
             return true;
         }
 

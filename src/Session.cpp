@@ -167,6 +167,7 @@ void Session::startTreatment(){
     QString roundMessage = QString("Round %1 Complete.").arg(currentRound);
     qInfo() << roundMessage;
 
+
     currentRound++;
 
     currentTimer->stop();
@@ -234,5 +235,8 @@ int Session::getElapsedTime() {
     return elapsedTime;
 }
 
+int Session::getCurrentRound(){
+    return currentRound;
+}
 
 

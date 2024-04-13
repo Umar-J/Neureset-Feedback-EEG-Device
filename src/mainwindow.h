@@ -49,6 +49,7 @@ private:
     QListWidget *activeQListWidget;
     QTimer *timer;
     QTimer *timerForTime;
+    QTimer *timerForSession;
     QTime currentTime;
     QDate currentDate;
     bool powerStatus;
@@ -58,7 +59,7 @@ private:
     void treatmentLedHandler(bool);
     void lostLedHandler(bool isOn);
     bool sessionInProgress;
-
+    void updateProgressBar(Session* session);
     void setTime();
     void setDate();
     void displayCurrentDateAndTime();

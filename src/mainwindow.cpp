@@ -138,7 +138,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(60000); // every minute should be 60000
+    timer->setInterval(30000); // every 30s should be 30000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -651,6 +651,13 @@ Session* MainWindow::startSession(){
 
 
     session->startSession();
+    timerForSession = new QTimer(this);
+    timerForSession->start();
+    timerForSession->setInterval(1000);
+    connect(timerForSession, &QTimer::timeout, this, [=]() {
+        updateProgressBar(session);
+    });
+    //updateProgressBar(session);
     return session;
 }
 
@@ -757,4 +764,18 @@ void MainWindow::handleSessionEnded() {
     sessionsLog.append(currentSession);
     treatmentLedHandler(false);
     currentSession  = nullptr;
+    ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 30); //decrease battery by 30% when treatment done
+}
+
+void MainWindow::updateProgressBar(Session* session){
+    int round = session->getCurrentRound();
+    if (round == 1){
+        ui->progressBar->setValue(25);
+    }else if(round == 2){
+        ui->progressBar->setValue(50);
+    }else if  (round == 3){
+        ui->progressBar->setValue(75);
+    }else{
+        ui->progressBar->setValue(100);
+    }
 }

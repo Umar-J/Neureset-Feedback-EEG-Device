@@ -170,7 +170,7 @@ selection-background-color: rgb(122, 0, 0)</string>
       <property name="geometry">
        <rect>
         <x>50</x>
-        <y>90</y>
+        <y>80</y>
         <width>118</width>
         <height>23</height>
        </rect>
@@ -186,7 +186,7 @@ selection-background-color: rgb(122, 0, 0)</string>
       <property name="geometry">
        <rect>
         <x>80</x>
-        <y>30</y>
+        <y>20</y>
         <width>61</width>
         <height>41</height>
        </rect>
@@ -200,6 +200,29 @@ qproperty-alignment: AlignCenter;</string>
       </property>
       <property name="textFormat">
        <enum>Qt::PlainText</enum>
+      </property>
+     </widget>
+     <widget class="QTimeEdit" name="timeEdit">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>110</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="dateEdit">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>110</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
       </property>
      </widget>
     </widget>
@@ -790,29 +813,6 @@ QPushButton:pressed {
       <string/>
      </property>
     </widget>
-    <widget class="QTimeEdit" name="timeEdit">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>110</y>
-       <width>91</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="calendarPopup">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>140</y>
-       <width>91</width>
-       <height>16</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="menuLabel">
      <property name="geometry">
       <rect>
@@ -861,8 +861,6 @@ color: rgb(255, 255, 255);</string>
     <zorder>contactLed</zorder>
     <zorder>treatmentLed</zorder>
     <zorder>lostLed</zorder>
-    <zorder>timeEdit</zorder>
-    <zorder>dateEdit</zorder>
     <zorder>menuLabel</zorder>
    </widget>
    <widget class="QPushButton" name="electrode_0">

@@ -2,9 +2,10 @@ Prerequisites:
 sudo apt install libqt5charts5-dev
 
 How to run:
-enter `git clone https://github.com/Umar-J/3004FinalProject`
-open 3004finalproject.pro to open project in qt 
-click run button
+- Enter `git clone https://github.com/Umar-J/3004FinalProject` into terminal
+- Open folder "3004FinalProject"
+- Open 3004finalproject.pro to open project in QC 
+- Click run button
 
 Team members:
  - Ali AlSaad
@@ -25,6 +26,10 @@ Team members:
    - Program Logic
 
 List of contents:
+   - res directory (for resources)
+   - src directory (for source/header files)
+   - Design-Documentation directory (for design documentation)
+   - ui folder (for ui elements)
    - Sequence Diagrmas folder
    - Use Cases
    - UML Class Diagram
@@ -32,3 +37,11 @@ List of contents:
    - Textual Explanation
    - State Machine Diagram
    - Readme
+   
+   
+Note:
+    Credits:
+	Some items in res directory and some ui elements are accredited to the denas project provided on the course VM
+	menu.h/cpp files are accredit to denas project
+
+

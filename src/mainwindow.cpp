@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget *parent)
         ui->timeEdit->setVisible(false);
         ui->dateEdit->setVisible(false);
         ui->progressBar->setVisible(false);
-
+        ui->countdown->setVisible(false);
         for(int i = 0; i < numEEGs; i++) {
             QPushButton *button = findChild<QPushButton*>(QString("electrode_%1").arg(i));
             //can put connect here
@@ -98,7 +98,12 @@ MainWindow::MainWindow(QWidget *parent)
 //            qInfo("working");
 
 //        }
-
+        timeLeft =35;
+        //ui->progressBar->setValue(35-timeLeft);
+        countTimer = new QTimer(this);
+       //countTimer->start(100);
+        connect(countTimer, &QTimer::timeout, this, &MainWindow::updateCountDown);
+        ui->progressBar->setRange(0,35);
 
 }
 MainWindow::~MainWindow()
@@ -138,7 +143,7 @@ void MainWindow::initializeMainMenu(Menu * m){
 
     //initialize the timer for the battery
     timer = new QTimer(this);
-    timer->setInterval(30000); // every 30s should be 30000
+    timer->setInterval(3000); // every 3s should be 3000
 
     //initialize the timer for time
     timerForTime = new QTimer(this);
@@ -207,6 +212,8 @@ bool MainWindow::electrodeConnectionCheck(){
         if (isConnected[i]==false){
             qInfo("all nodes not connected");
             contactLedHandler(false);
+            lostLedHandler(true);
+            stopSession();
             return false;
         }
     }
@@ -399,7 +406,10 @@ void MainWindow::updateMenu(const QString selectedMenuItem, const QStringList me
 }
 
 void MainWindow::navigateToMainMenu(){
-    lostLedHandler(false);
+    //lostLedHandler(false);
+    ui->progressBar->setVisible(false);
+    ui->countdown->setVisible(false);
+    ui->progressBar->setValue(0);
     //check for ongoing therapy
     if(sessionInProgress){
         sessionInProgress= false;
@@ -442,9 +452,10 @@ void MainWindow::drainBattery(){
         if (ui->batteryLevelBar->value() != 0){
             //decrease by 1
             if (ui->batteryLevelBar->value() ==5){
-                currentSession->stopSession();
+                if (currentSession)
+                    currentSession->stopSession();
             }
-            ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 1);
+            ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 0.05);
          }else{
             //turn off the device
             qInfo("Power Off");
@@ -634,11 +645,16 @@ void MainWindow::enableTreatmentButtons(bool status){
 Session* MainWindow::startSession(){
     //If all nodes connected and has atleast 10% battery
     //Idea Suggestion: Drain battery 10% each session?
+    if (ui->batteryLevelBar->value()<10){
+        navigateToMainMenu();
+        qInfo()<<"Battery too low\n";
+    }
     if((!electrodeConnectionCheck() || ui->batteryLevelBar->value() < 10)){
         qInfo("Not gonna do treatment");
         return nullptr;
     }
     qInfo("yess gonna do treatment");
+    ui->progressBar->setValue(0);
     ui->progressBar->setVisible(true);
     sessionInProgress = true;
     //enable the 3 buttons
@@ -654,6 +670,11 @@ Session* MainWindow::startSession(){
     timerForSession = new QTimer(this);
     timerForSession->start();
     timerForSession->setInterval(1000);
+    //connect(countTimer, &QTimer::timeout, this, &MainWindow::updateCountDown);
+    timeLeft = 35;
+    ui->countdown->setVisible(true);
+    ui->progressBar->setValue(0);
+    countTimer->start(1000);
     connect(timerForSession, &QTimer::timeout, this, [=]() {
         updateProgressBar(session);
     });
@@ -708,6 +729,7 @@ void MainWindow::playSession() {
         return;
     }
     qInfo("resuming session");
+    countTimer->start(1000);
     sessionInProgress = true;
     currentSession->playSession();
 
@@ -719,6 +741,7 @@ void MainWindow::pauseSession() {
     }
     qInfo("pausing Session");
     sessionInProgress = false;
+    countTimer->stop();
     currentSession->pauseSession();
 }
 
@@ -731,7 +754,7 @@ void MainWindow::stopSession() {
     }
     sessionInProgress = false;
     currentSession->stopSession();
-
+    countTimer->stop();
     qInfo("stopping Session");
     qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
@@ -756,6 +779,17 @@ void MainWindow::onEegSelected(int index){
     if(chartView != nullptr) ui->waveformLayout->addWidget(chartView);
 }
 
+void MainWindow::updateCountDown(){
+    if (timeLeft > 0) {
+        timeLeft--;
+        ui->countdown->setText(QString::number(timeLeft));
+
+        ui->progressBar->setValue(35 - timeLeft);
+    } else {
+        countTimer->stop();  // Stop the timer when the countdown reaches 0
+    }
+}
+
 void MainWindow::handleSessionEnded() {
     sessionInProgress = false;
     qInfo("stopping Session");
@@ -769,6 +803,7 @@ void MainWindow::handleSessionEnded() {
 
 void MainWindow::updateProgressBar(Session* session){
     int round = session->getCurrentRound();
+
     if (round == 1){
         ui->progressBar->setValue(25);
     }else if(round == 2){
@@ -777,5 +812,6 @@ void MainWindow::updateProgressBar(Session* session){
         ui->progressBar->setValue(75);
     }else{
         ui->progressBar->setValue(100);
+        timerForSession->stop();
     }
 }

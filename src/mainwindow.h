@@ -35,6 +35,8 @@ public:
 private:
     Ui::MainWindow *ui;
     void loadLogsBrowser();
+    QTimer* countTimer;
+    int timeLeft;
     QFile* logFile;
     //vector<bool> isConnected;
     //bool isConnected [21];
@@ -70,6 +72,7 @@ private:
     void enableTreatmentButtons(bool);
 
     void onEegSelected(int index);
+    void updateCountDown();
 
 // *** TODO: Implement these before un-commenting
 //    bool checkAverageBaseline();

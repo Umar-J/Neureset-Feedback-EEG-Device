@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>285</width>
+    <width>296</width>
     <height>195</height>
    </rect>
   </property>
@@ -16,17 +16,20 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>80</x>
+     <x>10</x>
      <y>40</y>
-     <width>121</width>
+     <width>271</width>
      <height>101</height>
     </rect>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
+   <property name="styleSheet">
+    <string notr="true">font: 75 italic 29pt &quot;DejaVu Sans&quot;;</string>
+   </property>
    <property name="text">
-    <string>Battery Low!</string>
+    <string>Battery Low!!</string>
    </property>
   </widget>
  </widget>

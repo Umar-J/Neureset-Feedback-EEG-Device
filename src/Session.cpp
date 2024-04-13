@@ -47,7 +47,11 @@ QVector<int> Session::getEndAverages() { return endAverages; }
 void Session::startSession(){
 
     //Keeps track of time
-    checkIfConnectionLost();
+    if (checkIfConnectionLost()){
+        currentTimer->stop();
+        return;
+    }
+
     startTime = QDateTime::currentDateTime();
 
     //Calculate the overall baseline for all EEG sites concurrently at the start of the session
@@ -55,7 +59,9 @@ void Session::startSession(){
     currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
-        checkIfConnectionLost();
+        if (checkIfConnectionLost()){
+            currentTimer->stop();
+        }
         startAverages = calculateBaselineAvg();
         this->startRound(); 
     });
@@ -84,7 +90,7 @@ void Session::stopSession(){
     time += getElapsedTime();
 
     // Calculate the overall baseline for all EEG sites concurrently at the end of the session
-    currentTimer->stop();
+    //currentTimer->stop();
     currentTimer = new QTimer(this);
     connect(currentTimer, &QTimer::timeout, this, [=](){
 
@@ -125,7 +131,9 @@ void Session::startRound() {
         currentTimer->stop();
         currentTimer = new QTimer(this);
         connect(currentTimer, &QTimer::timeout, this, [=](){
-            checkIfConnectionLost();
+            if (checkIfConnectionLost()){
+                currentTimer->stop();
+            }
             startTreatment();
         });
         currentTimer->start(1000);
@@ -139,7 +147,9 @@ QVector<int> Session::calculateBaselineAvg() {
     checkIfConnectionLost();
     QVector<int> baselineAvg;
     for(int i = 0; i < eegList.size(); i++){
-        checkIfConnectionLost();
+        if (checkIfConnectionLost()){
+                continue;
+            }
         eegList[i]->calculateDominantFrequency();
         baselineAvg.append(eegList[i]->getBaseline());
         QString message = QString("EEG %1's baseline average: %2").arg(i+1).arg(eegList[i]->getBaseline());
@@ -215,7 +225,7 @@ bool Session::checkIfConnectionLost(){
             qInfo("eeg %d is disconnected-------------------------------",i);
             //make it red
             emit turnOnRed(true);
-            pauseSession();
+            //pauseSession();
             stopSession();
 
             return true;

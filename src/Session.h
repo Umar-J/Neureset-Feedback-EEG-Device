@@ -49,6 +49,7 @@ public:
 
     QVector<int> getStartAverages();
     QVector<int> getEndAverages();
+    int getCurrentRound();
 
     void startSession();
 
@@ -93,6 +94,7 @@ private:
 
     void greenLightOff();
     void informUser();
+
 
 
     int getElapsedTime();

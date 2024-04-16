@@ -213,7 +213,7 @@ bool MainWindow::electrodeConnectionCheck(){
             qInfo("all nodes not connected");
             contactLedHandler(false);
             lostLedHandler(true);
-            stopSession();
+            pauseSession();
             return false;
         }
     }
@@ -380,6 +380,8 @@ void MainWindow::applyElectrode(int i){
         //WHEN EEG CONNECTS TO HEAD GENERATE WAVEFORMS
         eegList[i]->generateWaveforms();
         onEegSelected(ui->eegSelector->currentIndex());
+        //Resumes session
+        playSession();
 
     }else{
         electrodes.at(i)->setStyleSheet("background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 white, stop: 1 grey);border-style: solid;border-color: black;border-width: 2px;border-radius: 8px;");
@@ -664,6 +666,7 @@ Session* MainWindow::startSession(){
     connect(session, &Session::turnOnGreen, this, &MainWindow::treatmentLedHandler);
     connect(session, &Session::turnOnRed, this, &MainWindow::lostLedHandler);
     connect(session, &Session::sessionEnded, this, &MainWindow::handleSessionEnded);
+    connect(session, &Session::turnOff, this, &MainWindow::powerButtonHandler);
 
 
     session->startSession();
@@ -760,7 +763,7 @@ void MainWindow::stopSession() {
     navigateToMainMenu();
     sessionsLog.append(currentSession);
     treatmentLedHandler(false);
-    currentSession  = nullptr;
+    //currentSession  = nullptr;
 }
 
 void MainWindow::onEegSelected(int index){
@@ -792,13 +795,15 @@ void MainWindow::updateCountDown(){
 
 void MainWindow::handleSessionEnded() {
     sessionInProgress = false;
-    qInfo("stopping Session");
-    qInfo("Add Current Session to sessionsLog Here!");
     navigateToMainMenu();
     sessionsLog.append(currentSession);
     treatmentLedHandler(false);
     currentSession  = nullptr;
     ui->batteryLevelBar->setValue(ui->batteryLevelBar->value() - 30); //decrease battery by 30% when treatment done
+
+    ui->countdown->setVisible(false);
+    ui->progressBar->setValue(0);
+    timerForSession->stop();
 }
 
 void MainWindow::updateProgressBar(Session* session){

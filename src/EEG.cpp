@@ -71,7 +71,7 @@ QChartView* EEG::plotWaveform(){
 
 void EEG::calculateDominantFrequency(){
     //REMOVE THIS IF RECALCUATION IS NEEDED EVERYTIME (OPTION 1)
-    if(baseline != -1) return;
+    //if(baseline != -1) return;
 
     double numerator = 0;
     double denominator = 0;
@@ -90,12 +90,13 @@ void EEG::calculateDominantFrequency(){
 
 void EEG::applyTreatment(double offset){
     //OPTION 1
-//    for(int i = 0; i < waveform.frequencies.size(); i++){
-//        waveform.frequencies[i] += offset;
-//    }
+    for(int i = 0; i < waveform.frequencies.size(); i++){
+        waveform.frequencies[i] += offset;
+    }
+    calculateDominantFrequency();
 
     //OPTION 2 (i think this is correct)
-    this->baseline += offset;
+    //this->baseline += offset;
 }
 
 double EEG::getBaseline(){

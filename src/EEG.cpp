@@ -70,7 +70,7 @@ QChartView* EEG::plotWaveform(){
 }
 
 void EEG::calculateDominantFrequency(){
-    //REMOVE THIS IF RECALCUATION IS NEEDED EVERYTIME (OPTION 1)
+    //FOR (OPTION 2)
     //if(baseline != -1) return;
 
     double numerator = 0;

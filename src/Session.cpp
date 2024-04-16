@@ -81,6 +81,16 @@ void Session::pauseSession(){
     currentTimer->stop();
     endTime = QDateTime::currentDateTime();
     time += getElapsedTime();
+
+
+    QTimer* stopTimer = new QTimer(this);
+    connect(stopTimer, &QTimer::timeout, this, [=](){
+        if(checkIfConnectionLost()){
+            stopSession();
+        }
+        stopTimer->stop();
+    });
+    stopTimer->start(5000);
 }
 
 void Session::stopSession(){
@@ -104,6 +114,11 @@ void Session::stopSession(){
         }
 
         emit sessionEnded();
+
+        if(checkIfConnectionLost()){
+            //turn off
+            emit turnOff();
+        }
     });
     currentTimer->start(calculationTime);
 }
@@ -226,7 +241,7 @@ bool Session::checkIfConnectionLost(){
             //make it red
             emit turnOnRed(true);
             //pauseSession();
-            stopSession();
+            //stopSession();
 
             return true;
         }

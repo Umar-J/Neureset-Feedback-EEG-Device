@@ -74,13 +74,6 @@ private:
     void onEegSelected(int index);
     void updateCountDown();
 
-// *** TODO: Implement these before un-commenting
-//    bool checkAverageBaseline();
-//    bool checkConnection(QVector<EEG*>);
-//    int calculateAverageBaseline();
-//    void shutdown();
-//    void deliverTreatment();
-//    void handleContactLoss();
     void updateMenu(const QString selectedMenuItem, const QStringList menuItems);
     void navigateToMainMenu();
     void goBack();

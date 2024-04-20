@@ -17,7 +17,12 @@ Team members:
 
 - Ayman Madani
    - Class Design
-   - Program Logic
+   - Use Case #1
+   - State Diagram
+   - Use Case Diagram
+   - Session logic
+   - Treatment Logic
+   - EEG waveform Generation
 
 - Umar Jan
    - Class Design

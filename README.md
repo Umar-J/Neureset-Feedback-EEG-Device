@@ -2,7 +2,7 @@ Prerequisites:
 sudo apt install libqt5charts5-dev
 
 Video:
-<https://youtu.be/Vt14HCn3ofk>
+<https://youtu.be/g26ivNsQbew>
 
 How to run:
 - Enter `git clone https://github.com/Umar-J/3004FinalProject` into terminal

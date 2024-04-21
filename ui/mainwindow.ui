@@ -202,6 +202,29 @@ qproperty-alignment: AlignCenter;</string>
        <enum>Qt::PlainText</enum>
       </property>
      </widget>
+     <widget class="QTimeEdit" name="timeEdit">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>110</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="calendarPopup">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QDateEdit" name="dateEdit">
+      <property name="geometry">
+       <rect>
+        <x>120</x>
+        <y>110</y>
+        <width>91</width>
+        <height>16</height>
+       </rect>
+      </property>
+     </widget>
     </widget>
     <widget class="QFrame" name="statusBarQFrame">
      <property name="geometry">
@@ -790,29 +813,6 @@ QPushButton:pressed {
       <string/>
      </property>
     </widget>
-    <widget class="QTimeEdit" name="timeEdit">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>110</y>
-       <width>91</width>
-       <height>16</height>
-      </rect>
-     </property>
-     <property name="calendarPopup">
-      <bool>true</bool>
-     </property>
-    </widget>
-    <widget class="QDateEdit" name="dateEdit">
-     <property name="geometry">
-      <rect>
-       <x>310</x>
-       <y>140</y>
-       <width>91</width>
-       <height>16</height>
-      </rect>
-     </property>
-    </widget>
     <widget class="QLabel" name="menuLabel">
      <property name="geometry">
       <rect>
@@ -861,8 +861,6 @@ color: rgb(255, 255, 255);</string>
     <zorder>contactLed</zorder>
     <zorder>treatmentLed</zorder>
     <zorder>lostLed</zorder>
-    <zorder>timeEdit</zorder>
-    <zorder>dateEdit</zorder>
     <zorder>menuLabel</zorder>
    </widget>
    <widget class="QPushButton" name="electrode_0">
